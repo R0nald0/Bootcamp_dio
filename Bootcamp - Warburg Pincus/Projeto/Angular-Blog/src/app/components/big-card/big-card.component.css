@@ -1,0 +1,22 @@
+.container__bigcard{
+   width: 100%
+}
+
+.container__image{
+    background-color: aqua;
+    width: 100%;
+    height: 100%;
+}
+.container__image > img{
+   height: 100%;
+    width: 100%;
+}
+.container_titulo{
+   margin-top: 0.5rem;
+}
+.container_titulo > h1 > a{
+    text-decoration: none;
+ } 
+ .container_descricao{
+    margin-top: 0.3rem
+ }

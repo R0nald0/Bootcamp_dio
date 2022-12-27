@@ -1,0 +1,17 @@
+.container_menuBar{
+
+}
+.container_menuBar > ul{
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+}
+
+.container_menuBar > ul > li{
+    margin-left: 2rem;
+    list-style: none;
+    display: flex;
+}
+.container_menuBar > ul >li >img {
+    width: 1rem;
+}

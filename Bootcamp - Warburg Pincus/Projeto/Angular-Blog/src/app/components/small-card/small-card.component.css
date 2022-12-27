@@ -1,0 +1,30 @@
+.contariner__conteudo_small-card{
+    width: 100%;
+}
+
+.container_smallCard{  
+    display: flex;
+    flex-direction: row;  
+}
+.container__image{
+    width: 20vw;
+    height: 100%;
+    
+}
+.container__image > img {
+    min-width: 100%;
+    width: 100%;
+    height: 20vh;
+}
+.container__titulo{
+    margin-left: 1.0rem;
+    display: flex;
+    align-items: center;
+}
+.container__titulo > h4 > a{
+    text-decoration: none;
+}
+.container__line{
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
