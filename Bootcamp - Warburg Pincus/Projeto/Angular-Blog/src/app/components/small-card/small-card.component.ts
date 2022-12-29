@@ -10,7 +10,8 @@ export class SmallCardComponent {
   cardFoto = ""
   @Input()
   cardTitle = ""
- 
+  @Input()
+   id ="0"
   constructor(){
 
   }
