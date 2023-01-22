@@ -1,0 +1,18 @@
+<input type="text" (input)="getPokemon($any($event.target).value)">
+
+<div class="card_container">
+   <div class="card_container_title">
+      <h4>{{pokemon.name}}</h4>
+   </div>
+   <div class="card_container_body">
+       <img src={{pokemon.sprites.front_default}} alt="pokemons">
+   </div>
+   <div class="card_container_footter">
+      <ul>
+         <li *ngFor="let abilidade of pokemon.types">
+            {{abilidade.type.name}}
+         </li>
+         
+      </ul>
+   </div>
+</div>
