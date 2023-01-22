@@ -7,11 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "tb_alunos")
 public class Aluno {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY) 
@@ -23,6 +29,6 @@ public class Aluno {
 
    private String bairro;
 
-
+  
    private LocalDate dataDeNascimento;      
 }
