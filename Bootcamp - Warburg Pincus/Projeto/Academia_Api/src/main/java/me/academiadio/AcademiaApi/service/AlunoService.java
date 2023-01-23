@@ -3,10 +3,11 @@ package me.academiadio.AcademiaApi.service;
 import java.util.List;
 
 import me.academiadio.AcademiaApi.entidades.Aluno;
+import me.academiadio.AcademiaApi.entidades.dto.AlunoDto;
 
 public interface AlunoService {
 
    
-    public Aluno criarAluno(Aluno aluno);
-    public List<Aluno> buscasTodos();
+    public Aluno criarAluno(AlunoDto alunodDto);
+    public List<AlunoDto> buscasTodos();
 }

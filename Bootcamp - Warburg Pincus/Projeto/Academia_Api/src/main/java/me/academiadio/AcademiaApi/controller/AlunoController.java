@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import me.academiadio.AcademiaApi.service.serviceImpl.AlunoServiceImpl;
 import me.academiadio.AcademiaApi.entidades.Aluno;
+import me.academiadio.AcademiaApi.entidades.dto.AlunoDto;
 
 
 @RestController
 @RequestMapping("/academiadio")
 public class AlunoController {
-    
 
   @Autowired
-    AlunoServiceImpl alunoService;
+  AlunoServiceImpl alunoService;
 
-    @GetMapping
-     public ResponseEntity<List<Aluno>> buscasTodos(){
-               List<Aluno> alunos = alunoService.buscasTodos();
-        return ResponseEntity.ok(alunos);
-     }
+  @GetMapping
+  public ResponseEntity<List<AlunoDto>> buscasTodos() {
+    List<AlunoDto> alunos = alunoService.buscasTodos();
+    return ResponseEntity.ok(alunos);
+  }
 
-     @PostMapping
-      public ResponseEntity<Aluno> salvarAluno(@RequestBody Aluno aluno) {
-                Aluno alunoCreado = alunoService.criarAluno(aluno); 
-                 return ResponseEntity.ok(alunoCreado);
-      }
+  @PostMapping
+  public ResponseEntity<Aluno> salvarAluno(@RequestBody AlunoDto alunoDto) {
+    Aluno alunoCreado = alunoService.criarAluno(alunoDto);
+    return ResponseEntity.ok(alunoCreado);
+  }
 }
