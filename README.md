@@ -1,6 +1,6 @@
 # Bootcamps_dio
-###pasta par projeto de bootcamps da Dio 
+### Repositorio para projeto de bootcamps Dio 
 
-*1 Cloud Fullstack Bootcamp - Warburg Pincus
-*2 Potência Tech powered by iFood - Java Beginners 
+* 1 Cloud Fullstack Bootcamp - Warburg Pincus
+* 2 Potência Tech powered by iFood - Java Beginners 
 
