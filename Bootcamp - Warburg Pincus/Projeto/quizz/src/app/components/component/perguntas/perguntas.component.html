@@ -1,0 +1,8 @@
+
+   <div class="secao__perguntas" >
+         <button *ngFor="let opcao of opcoes; let i = index" 
+           (cliclk)="opcoesEscolhida(i)"  class="btn_opcoes">
+               {{opcao.name}}
+          </button>
+   </div>
+

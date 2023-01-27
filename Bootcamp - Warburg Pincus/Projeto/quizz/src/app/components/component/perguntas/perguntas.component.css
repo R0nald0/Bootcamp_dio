@@ -1,0 +1,31 @@
+.secao__perguntas{
+    display: flex;
+    width: 90%;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 2rem;
+    margin-bottom: 20px;
+}
+.btn_opcoes{
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid #18ab29;
+    width: 48%;
+    margin: 0.1rem;
+    display: inline-block;
+    cursor: pointer;
+    color: black;
+    font-family: Arial;
+    font-size: 17px;
+    padding: 16px 31px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #2f6627;
+}
+
+.btn_opcoes:hover{
+    background-color: #18ab29;
+}
+.btn_opcoes:active{
+    top: 2px;
+    position: relative;
+}

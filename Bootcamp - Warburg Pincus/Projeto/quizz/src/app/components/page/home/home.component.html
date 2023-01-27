@@ -1,0 +1,19 @@
+<div class="homePage_component">
+    <div class="home_container_perguntas">
+        <div class="index__pergunta_container">
+            <app-index-pergunta 
+               [totalPerguntas]="totalPergunta"
+               [index]="indexPegunta"
+               ></app-index-pergunta>
+        </div>
+
+        <div class="titulo__pergunta_container">
+             <app-titulo-pergunta  [titulo]="pergunta.titulo"></app-titulo-pergunta>
+        </div>
+      
+        <div class="perguntas__container">
+            <app-perguntas [opcoes]="opcoes"></app-perguntas>
+        </div>
+    
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "quizapp-55dfe": {
+      "hosting": {
+        "quizz": [
+          "quizapp-55dfe"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "quizapp-55dfe"
+  }
+}
