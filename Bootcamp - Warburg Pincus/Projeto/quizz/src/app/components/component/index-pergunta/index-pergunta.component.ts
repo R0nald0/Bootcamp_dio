@@ -17,8 +17,7 @@ export class IndexPerguntaComponent implements OnInit {
     constructor(){ 
     }
   ngOnInit(): void {
-    this.index +=1 
-    console.log(this.totalPerguntas);
+  
   }
   
 }

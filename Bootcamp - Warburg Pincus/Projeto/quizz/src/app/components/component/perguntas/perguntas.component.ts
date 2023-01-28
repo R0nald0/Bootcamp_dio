@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Opcao } from 'src/app/model/opcao';
 
 @Component({
@@ -10,10 +10,12 @@ export class PerguntasComponent {
   
   @Input()
    opcoes :Opcao[] = []
-  
 
+  @Output()
+     eventoEscolhaOpcao= new EventEmitter<number>()
 
    opcoesEscolhida(idOpcao : number) {
-      console.log(idOpcao);
+      this.eventoEscolhaOpcao.emit(idOpcao)
+    
     }
 }
