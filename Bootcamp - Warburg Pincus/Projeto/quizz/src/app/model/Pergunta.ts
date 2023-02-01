@@ -1,6 +1,6 @@
 export class Pergunta  {
-    titulo = "";
+    Titulo = "";
     RespostaCerta =""; 
-    list  = []; 
+    Resposta  = []; 
     
 }

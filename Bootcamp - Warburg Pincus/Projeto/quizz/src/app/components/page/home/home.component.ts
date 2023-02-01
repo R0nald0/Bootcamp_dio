@@ -11,53 +11,77 @@ import { PerguntaService } from 'src/app/shared/services/pergunta.service';
 export class HomeComponent implements OnInit{
   pergunta = new Pergunta() 
   totalPergunta = 0;
-  opcoes: Opcao[] =[]
   indexPegunta =0;
   acertos =0;
+  listaPegunta : Pergunta[]= []
   
   constructor(private servicePergunta: PerguntaService){}
 
    ngOnInit(): void {
  
-      this.recuperarPeguntas()
+    this.recuperarPerguntasFirebase()  
+    //this.recuperarPeguntas()
+    
     }
     
    recuperarPeguntas(){
      const lista = this.servicePergunta.recuperarPerguntasQuiz()
             this.totalPergunta = lista.questions.length
-            this.pergunta.titulo =  lista.questions[this.indexPegunta].question
-            this.opcoes = lista.questions[this.indexPegunta].options
+            this.pergunta.Titulo =  lista.questions[this.indexPegunta].question
+           // this.opcoes = lista.questions[this.indexPegunta].options
             console.log("indexPEr=" + this.indexPegunta +  " totalPergunta" + this.totalPergunta)   
-    }     
+              
+             this.listaPegunta.forEach((p) => {
+                console.log(p.Titulo)
+             })
     
-    getIndexPergunta(idRepostaEscolhida:number){ 
-      
-        if(this.indexPegunta +1 < this.totalPergunta){
+          }    
+
+    listarPeguntar(){
+      this.totalPergunta = this.listaPegunta.length
+      this.pergunta.Titulo = this.listaPegunta[this.indexPegunta].Titulo
+      this.pergunta.Resposta = this.listaPegunta[this.indexPegunta].Resposta
+    } 
+    
+    getIndexPergunta(idRepostaEscolhida:number){     
+        if(this.indexPegunta +1 <= this.totalPergunta){
             this.verificarRespostaCerta(
                      idRepostaEscolhida,
-                     this.opcoes[this.indexPegunta]
-              )    
-            
-            this.atualizarPeguntas()   
-
-        }
-        else{
-          alert("Fim das perguntsas")
+                     this.listaPegunta[this.indexPegunta]
+                )   
+                this.atualizarPeguntas()                    
+        } else{     
+           alert("Fim das perguntsas")
         }
     }
-    verificarRespostaCerta(idRepostaEscolhida : number,opcao : Opcao){
-      
-           if(idRepostaEscolhida === 1 ){
+
+    verificarRespostaCerta(idRepostaEscolhida : number,pergunta : Pergunta){
+           if(idRepostaEscolhida === Number.parseInt( pergunta.RespostaCerta) ){
               this.acertos +=1
               console.log("acertos= "+ this.acertos)
-              //TODO verificar index de opcoes
+           }else{
+            console.log("erro= ")
            }   
+           
     }
-    atualizarPeguntas(){
     
+    atualizarPeguntas(){
         this.indexPegunta +=1
-        this.recuperarPeguntas()    
+          this.listarPeguntar()
     }
+
+    
+recuperarPerguntasFirebase(){
+ this.servicePergunta.recuperarPergunta().subscribe({
+   next:data => data.map((d) => {
+      let item = d.payload.doc.data() as Pergunta
+      this.listaPegunta.push(item)
+      this.listarPeguntar()  
+  }),error:eer => console.log(eer.message)
+ })    
+ 
+  }
+ 
 }
 
 

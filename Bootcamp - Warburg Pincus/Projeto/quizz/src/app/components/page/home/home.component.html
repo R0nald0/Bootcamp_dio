@@ -9,13 +9,13 @@
 
         <div class="titulo__pergunta_container">
              <app-titulo-pergunta  
-               [titulo]="pergunta.titulo">
+               [titulo]="pergunta.Titulo">
             </app-titulo-pergunta>
         </div>
       
         <div class="perguntas__container">
             <app-perguntas 
-                   [opcoes]="opcoes" 
+                   [opcoes]="pergunta.Resposta" 
                    (eventoEscolhaOpcao)="getIndexPergunta($event)">
             </app-perguntas>
         </div>

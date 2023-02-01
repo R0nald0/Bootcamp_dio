@@ -8,11 +8,11 @@ import  quiz_questions from  'src/app/data/quizz_questions.json';
   providedIn: 'root'
 })
 export class PerguntaService {
-  
+
 
   constructor(private fireDd : AngularFirestore) { }
     
-   recuperarPergunta(){
+    recuperarPergunta() {
     return this.fireDd.collection('Perguntas').snapshotChanges()
    }
    recuperarPerguntasQuiz(){

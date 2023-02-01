@@ -9,6 +9,7 @@ import { HomeComponent } from './components/page/home/home.component';
 import { TituloPerguntaComponent } from './components/component/titulo-pergunta/titulo-pergunta.component';
 import { IndexPerguntaComponent } from './components/component/index-pergunta/index-pergunta.component';
 import { PerguntasComponent } from './components/component/perguntas/perguntas.component';
+import { PrincipalComponent } from './components/page/principal/principal.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { PerguntasComponent } from './components/component/perguntas/perguntas.c
     HomeComponent,
     TituloPerguntaComponent,
     IndexPerguntaComponent,
-    PerguntasComponent
+    PerguntasComponent,
+    PrincipalComponent
   ],
   imports: [
     BrowserModule,
