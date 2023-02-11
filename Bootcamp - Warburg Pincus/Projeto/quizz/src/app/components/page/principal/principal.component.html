@@ -1,1 +1,46 @@
-<p>principal works!</p>
+<div class="principal_page_container">
+    <div class="left_card">
+       <div class="texto_container">
+              <h2>Resposnda perguntas e divirta-se com seus amigos</h2>
+       </div>
+       <div class="List_container">
+              <app-table-component [listRankingUser]="list"></app-table-component> 
+       </div> 
+    </div>
+    
+    <div class="login_container">
+           <div class="login_container_titulo">
+                <h1>Login</h1>
+           </div>
+           <div class="login_container_buttons">
+                 <input type="email" placeholder="email">
+                 <input type="password" placeholder="senha"> 
+           </div>
+           <div class="login_container_opcoes">
+                 <div class="login_container_opcoes_op">
+                     <a href="#">
+                        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="">
+                        <span>Fazer login com o FaceBook</span>
+                     </a>
+                 </div>
+                 <div class="login_container_opcoes_op">
+                     <a href="#">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968534.png" alt="">
+                        <span>Fazer login com o Gmail</span>
+                     </a>
+                 </div>                         
+           </div>
+           <div class="login_btn_container">
+            <button type="submit">Acessar</button>
+         </div>
+         <div class="login_cadastre-se_container">
+            <p>Não tem conta?</p>
+            <a href="">  
+                   <span>Cadastre-se</span>
+               </a>
+         </div>
+           
+           
+    </div>
+
+</div>

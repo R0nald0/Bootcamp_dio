@@ -1,0 +1,28 @@
+<div class="table_container">
+        
+    <table>
+      <div class="table_header_container">
+         <thead>
+            <tr> 
+               <th>Posicão</th>
+               <th>Image</th>
+               <th>Nome</th>
+               <th>Pontuação</th>
+            </tr>
+         </thead>
+      </div>
+        <div class="table_item_containeer" *ngFor="let userRanking of listRankingUser  ; let i =index ">
+          <tbody>
+            <tr>
+               <td>{{i+1 }}</td>
+               <td><img 
+                 *ngIf="userRanking.urlImagemPerfil" src={{imgAsset}} 
+               alt={{userRanking.nome}}></td>
+               <td>{{userRanking.nome}} </td>
+               <td>{{userRanking.pontuacao}}</td>
+            </tr>
+          </tbody>
+         </div>
+    
+    </table>
+</div>

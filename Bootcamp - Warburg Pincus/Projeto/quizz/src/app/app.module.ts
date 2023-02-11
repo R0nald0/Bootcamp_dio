@@ -10,6 +10,8 @@ import { TituloPerguntaComponent } from './components/component/titulo-pergunta/
 import { IndexPerguntaComponent } from './components/component/index-pergunta/index-pergunta.component';
 import { PerguntasComponent } from './components/component/perguntas/perguntas.component';
 import { PrincipalComponent } from './components/page/principal/principal.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { TableComponentComponent } from './components/shared/table-component/table-component.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,11 @@ import { PrincipalComponent } from './components/page/principal/principal.compon
     TituloPerguntaComponent,
     IndexPerguntaComponent,
     PerguntasComponent,
-    PrincipalComponent
+    PrincipalComponent,
+    NavbarComponent,
+    TableComponentComponent,
+
+
   ],
   imports: [
     BrowserModule,
