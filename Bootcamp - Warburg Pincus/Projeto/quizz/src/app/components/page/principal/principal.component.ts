@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UserRankingModel } from 'src/app/model/UserRakingModel';
 import { PerguntaService } from 'src/app/shared/services/pergunta.service';
-import {ɵSafeResourceUrl} from '@angular/core';
+import {NgForm} from '@angular/forms'
 import { DomSanitizer } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-principal',
@@ -11,23 +12,49 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class PrincipalComponent implements OnInit {
    list : UserRankingModel[]=[]
+    
+   email =""
+   password =""
 
-   constructor(private firebaseDbService : PerguntaService , private sanitization:DomSanitizer){}
+   isLogginVerified = false
 
+   constructor(private firebaseDbService : PerguntaService , private sanitization:DomSanitizer ){}
 
+   
+   class_error = ['input_error_container > input']
   ngOnInit(): void {
       this.getRanking()
   }
 
-    getRanking() {
+   getRanking() {
        this.firebaseDbService.recuperarRankingUser().subscribe({
         next: data => data.forEach((it)=>{
              let item = it.payload.doc.data() as UserRankingModel
-             let ite  = this.sanitization.bypassSecurityTrustUrl(`${item.urlImagemPerfil}`)
-             item.urlImagemPerfil = `${it}`;
+     
+           // this.firebaseDbService.getUrlImageFromStorage(`${item.id}`)
+             /*  this.firebaseDbService.getUrlImageFromStorage(`${item.id}`).subscribe({
+                next : (img: string | String) =>   
+                     {  this.sanitization.bypassSecurityTrustResourceUrl(`${img}`)
+                      item.urlImagemPerfil=(img)
+                    }
+              }) */
+                       
              this.list.push(item);
         }),
         error: erro => console.log("erro ao buscar dados",erro)
        });
+    }
+
+    validateData(dados : NgForm){    
+    
+      if(dados.valid == true){
+           
+      }
+    }
+
+    onClick(){
+   
+      this.isLogginVerified = !this.isLogginVerified;
+      console.log(!this.isLogginVerified)
     }
   }

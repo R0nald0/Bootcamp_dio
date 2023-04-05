@@ -10,26 +10,34 @@ export class TableComponentComponent implements OnInit{
 
   @Input()
    listRankingUser: UserRankingModel[]=[];
-   position = 1
+   listUsers: UserRankingModel[]=[];
+   
    imgAsset ='assets/images/user_profile_white.jpeg'
    constructor(){
 
    }
   ngOnInit(): void {
       this.addListOnView()
+      this.initList()
     }
-
 
     addListOnView(){
       this.listRankingUser.forEach((it) =>{
       
         console.log(it.urlImagemPerfil)
-         this.position++
+      
          console.log(it.nome)
        });  
     }
 
 
-
+   initList(){
+     this.listRankingUser.forEach((it) =>{ 
+        if (it.urlImagemPerfil === "" || it.urlImagemPerfil == null) {
+             it.urlImagemPerfil = this.imgAsset
+        }
+       this.listUsers.push(it)
+     })
+   }
   
 }

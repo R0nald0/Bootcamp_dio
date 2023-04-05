@@ -15,9 +15,9 @@
           <tbody>
             <tr>
                <td>{{i+1 }}</td>
-               <td><img 
-                 *ngIf="userRanking.urlImagemPerfil" src={{imgAsset}} 
-               alt={{userRanking.nome}}></td>
+               <td >
+                   <img src="{{imgAsset}}" alt=""> 
+               </td>
                <td>{{userRanking.nome}} </td>
                <td>{{userRanking.pontuacao}}</td>
             </tr>
@@ -25,4 +25,8 @@
          </div>
     
     </table>
+
+    <ng-template #imgAssets>
+        <img src="{{imgAsset}}" alt="">
+    </ng-template>
 </div>

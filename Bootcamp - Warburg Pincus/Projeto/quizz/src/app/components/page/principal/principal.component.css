@@ -4,16 +4,22 @@
     background-color: rgb(138, 7, 143);
     padding: 3rem;
     display: flex;
+    flex-direction: row;
     color: white;
     align-items: center;
     justify-content:space-around;
 }
 .left_card{
-    width:60%;
+    width:50%;
 }
-.texto_container{
+
+.right_card{
+   width: 40%;  
+   height: 100%;
+}
+ .texto_container{
     width:100%;
-    height: 55%;
+ 
 }
 .List_container{
     display: flex;
@@ -24,93 +30,18 @@
     background: chartreuse;
     background-color: rgb(138, 7, 143);
 }
+
+/*
 .login_container{
     width: 35%;
+    
     display: flex;
-    height: 67%;
+    height: 80%;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    background: rgb(179, 8, 185);
+    
     margin: 2rem;
     border-radius: 20px
 }
-.login_container_buttons{
-    display: flex;
-    height: 31%;
-    flex-direction: column;
-}
-.login_container_buttons > input{
-   background: #89044ed1;
-   height: 15%;
-    border-radius: 1rem;
-    margin-top: 0.4rem;
-    padding: 22px;
-    border: none;
-    color: white;
-}
-.login_container_buttons > input::placeholder{
-   color: white;  
- }
-.login_container_buttons > :hover{
-      position: relative;
-      left: 3px;
- }
-.login_container_opcoes{
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     width: 100%;
-    
-}
-.login_container_opcoes_op  {
-    margin-top: 5px;
-}
-.login_container_opcoes_op > a {
-     color: white;
-     text-decoration: none;
-     display:flex;
-     align-items: start;
-     justify-content: start;
-     
-}
-.login_container_opcoes_op > a >img {
-     margin: 5px;
-     width: 12px;
-}
-
-.login_btn_container{ 
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    height: 10%;
-}
-
-.login_btn_container > button{ 
-    width: 50%;
-    border-radius: 23px;
-    background:rgb(179, 8, 185);
-    color: aliceblue;
-}
-.login_btn_container > :hover{
-    background:rgb(7, 75, 30);
-}
-.login_btn_container > :active{
-    position: relative;
-    bottom: 2px;
-    left: 1px;
-    background:rgb(7, 75, 30);
-}
-
-.login_cadastre-se_container{
-    font-size: 10pt;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-     padding: 1rem;
-}
-
-.login_cadastre-se_container > a >span{
-     color :#8ecbaf
-}
-
+ */

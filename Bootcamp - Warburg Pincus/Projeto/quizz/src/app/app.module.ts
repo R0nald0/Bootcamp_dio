@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {AngularFireModule} from '@angular/fire/compat'
@@ -12,6 +15,11 @@ import { PerguntasComponent } from './components/component/perguntas/perguntas.c
 import { PrincipalComponent } from './components/page/principal/principal.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { TableComponentComponent } from './components/shared/table-component/table-component.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginComponentComponent } from './components/component/login-component/login-component.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -23,15 +31,22 @@ import { TableComponentComponent } from './components/shared/table-component/tab
     PrincipalComponent,
     NavbarComponent,
     TableComponentComponent,
-
-
+    LoginComponentComponent,
+    
   ],
+
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase)
+    ReactiveFormsModule,
+    FormsModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
-  providers: [],
+  providers: [ {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
