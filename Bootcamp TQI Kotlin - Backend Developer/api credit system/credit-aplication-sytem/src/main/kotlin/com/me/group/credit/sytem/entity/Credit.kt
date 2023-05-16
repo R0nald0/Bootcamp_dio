@@ -19,9 +19,9 @@ data class Credit(
         @Column(nullable = false)
         val numberOfInstallments : Int = 0,
         @Enumerated
-        val status : Status = Status.IN_PROGRESS,
+        var status : Status = Status.IN_PROGRESS,
         @ManyToOne
-        val costumer : Costumer? = null,
+        var customer : Customer? = null,
         @Id
         @GeneratedValue(strategy =GenerationType.IDENTITY)
         val id :Long? = null
