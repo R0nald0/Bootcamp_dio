@@ -5,6 +5,7 @@ import com.me.group.credit.sytem.dto.CreditView
 import com.me.group.credit.sytem.dto.toEntity
 import com.me.group.credit.sytem.entity.Credit
 import com.me.group.credit.sytem.service.serviceImpl.CreditService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,13 +24,13 @@ class CreditController(
   private val creditService: CreditService
 ) {
 
-    @PostMapping
-   fun saveCredit(@RequestBody creditDTO: CreditDTO):ResponseEntity<String>{
+    @PostMapping("/save")
+   fun saveCredit(@RequestBody  @Valid creditDTO: CreditDTO):ResponseEntity<String>{
           val credit = creditService.save(creditDTO.toEntity())
         return ResponseEntity.status(HttpStatus.CREATED).body("Credit - ${credit.creditCode} saved")
    }
 
-    @GetMapping
+    @GetMapping("/credits")
     fun findAllCreditByCustomer(
             @RequestParam(value = "customerId")
             idCustomer:Long) :ResponseEntity<List<CreditView>>{
@@ -40,7 +41,7 @@ class CreditController(
           return ResponseEntity.ok(listCreditView)
     }
 
-    @GetMapping("/{idCustomer}")
+    @GetMapping("credit/{creditCode}")
     fun findByCreditCode(@RequestParam(value = "customerId") idCustomer: Long,
                          @PathVariable creditCode : UUID):ResponseEntity<CreditView>{
             val  credit= creditService.findByCreditCode( creditCode ,idCustomer)

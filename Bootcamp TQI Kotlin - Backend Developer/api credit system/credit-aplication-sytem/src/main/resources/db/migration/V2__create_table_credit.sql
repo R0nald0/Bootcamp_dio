@@ -5,10 +5,10 @@ CREATE TABLE credit (
    day_first_installment date NOT NULL,
    number_of_installments INT NOT NULL,
    status INT,
-   costumer_id BIGINT,
+   customer_id BIGINT,
    CONSTRAINT pk_credit PRIMARY KEY (id)
 );
 
 ALTER TABLE credit ADD CONSTRAINT uc_credit_creditcode UNIQUE (credit_code);
 
-ALTER TABLE credit ADD CONSTRAINT FK_CREDIT_ON_COSTUMER FOREIGN KEY (costumer_id) REFERENCES costumer (id);
+ALTER TABLE credit ADD CONSTRAINT FK_CREDIT_ON_CUSTOMER FOREIGN KEY (customer_id) REFERENCES costumer (id);

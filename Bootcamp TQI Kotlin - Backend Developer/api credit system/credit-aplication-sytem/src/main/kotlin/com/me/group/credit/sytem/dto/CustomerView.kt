@@ -1,10 +1,9 @@
 package com.me.group.credit.sytem.dto
 
 import com.me.group.credit.sytem.entity.Customer
-import jakarta.validation.constraints.Email
 import java.math.BigDecimal
 
-data class CustemerView (
+data class CustomerView (
       val fistName:String,
       val lastName:String,
       val cpf :String,

@@ -24,7 +24,7 @@ data class Customer(
         @Column(nullable = false)
        @OneToMany(
                fetch = FetchType.LAZY,
-               cascade =[CascadeType.REMOVE],
+               cascade =[CascadeType.REMOVE,CascadeType.PERSIST],
                mappedBy = "customer"
                )
        var credits : List<Credit> = mutableListOf(),
