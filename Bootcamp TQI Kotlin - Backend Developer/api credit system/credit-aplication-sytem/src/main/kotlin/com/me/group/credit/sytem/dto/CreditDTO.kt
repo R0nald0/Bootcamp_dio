@@ -12,8 +12,7 @@ import java.time.LocalDate
 data class CreditDTO(
         @field:NotNull
         val creditValue: BigDecimal,
-
-        @field:Future
+        @field:Future(message = "this date is on past")
         val dayOfInstallment:LocalDate,
         @field:Min(value = 1, message = "Number Minimum of installment is invalid")
         @field:Max(value = 24, message = "Number maximum of installment is invalid")
