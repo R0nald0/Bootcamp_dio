@@ -25,7 +25,7 @@ class CustomerController(
     @PostMapping("/save")
     fun saveCustomer(@RequestBody @Valid costumerDTO :CostumerDTO):ResponseEntity<CustomerView>{
     val customer =  serviceCustomer.save(costumerDTO.toEnttity())
-      return  ResponseEntity.ok(customer.toView())
+      return  ResponseEntity.status(HttpStatus.CREATED).body(customer.toView())
     }
 
     @GetMapping("/{id}")
@@ -49,7 +49,7 @@ class CustomerController(
          }
        val custemerUpadte = serviceCustomer.save(customer)
         val custumerView = CustomerView(custemerUpadte)
-        return ResponseEntity.status(HttpStatus.CREATED).body(custumerView)
+        return ResponseEntity.status(HttpStatus.OK).body(custumerView)
 
     }
 }

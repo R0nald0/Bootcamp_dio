@@ -21,7 +21,7 @@ class CustomerServiceImpl(
 
     override fun findById(idCustomer: Long): Customer {
     return    custumerRepository.findById(idCustomer).orElseThrow{
-            throw BusinessException("id ${idCustomer} not found ")
+            throw BusinessException("id ${idCustomer} not found")
         }
     }
 
