@@ -29,6 +29,7 @@ dependencies {
 
 	testImplementation 'io.mockk:mockk:1.13.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 tasks.withType(KotlinCompile).configureEach {
@@ -41,3 +42,4 @@ tasks.withType(KotlinCompile).configureEach {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+

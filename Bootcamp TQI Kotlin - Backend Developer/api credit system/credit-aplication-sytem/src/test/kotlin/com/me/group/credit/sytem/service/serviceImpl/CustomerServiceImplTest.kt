@@ -57,7 +57,9 @@ class CustomerServiceImplTest {
         Assertions.assertThat(optionalCustumer).isSameAs(customer)
         Assertions.assertThat(optionalCustumer).isInstanceOf(Customer::class.java)
         Assertions.assertThat(optionalCustumer.id).isEqualTo(1)
-        verify(exactly = 1) { repositoryCustomer.findById(1) }
+        verify(exactly = 1) { repositoryCustomer.findById(1)
+
+        }
     }
 
     @Test
@@ -98,8 +100,6 @@ fun `delete must throw a Businesse exception when credit have status approved`()
     }.withMessage("Customer ${customer.fistName} have pending Crédit")
     verify (exactly = 1) {repositoryCustomer.findById(1)}
     verify (exactly = 1) {creditRepository.findAllByCustomer(1)}
-
-
 }
     @AfterEach
     fun tearDown() {
