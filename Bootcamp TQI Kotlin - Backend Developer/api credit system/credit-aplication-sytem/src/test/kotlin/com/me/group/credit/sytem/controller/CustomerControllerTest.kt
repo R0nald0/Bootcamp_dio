@@ -3,6 +3,7 @@ package com.me.group.credit.sytem.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.me.group.credit.sytem.dto.CostumerDTO
 import com.me.group.credit.sytem.dto.toEnttity
+import com.me.group.credit.sytem.entity.Account
 import com.me.group.credit.sytem.repository.CustomerRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -18,13 +19,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.math.BigDecimal
+import java.util.*
 
 @ActiveProfiles("Test")
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration
 class CustomerControllerTest {
-  @Autowired
+
+    @Autowired
    private lateinit var customerRepository: CustomerRepository
    @Autowired
    private lateinit var  mockMvc: MockMvc
@@ -156,10 +159,6 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.income")
                          .value("2500.0"))
                 .andDo(MockMvcResultHandlers.print())
-
-
-
-
     }
 
     @Test
@@ -182,8 +181,17 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.detail").isNotEmpty)
                 .andDo(MockMvcResultHandlers.print())
 
+    }
 
+    @Test
+    fun `findCustomerByEmail_most receive a email and return a CustomerViewDTO`() {
+          val customerMock = customerRepository.save(customerr.toEnttity())
+         val customerDTOString = objectManager.writeValueAsString(customerMock)
 
+        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/?email=${customerMock.email}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(customerMock.email)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
 
     }
 
@@ -192,6 +200,13 @@ class CustomerControllerTest {
         customerRepository.deleteAll()
     }
 
+    val account = Account(
+        numberAccount = 999999,
+        accountBalanceBlocked = BigDecimal.valueOf(2000L),
+        movements = mutableListOf(),
+        accountFreeBalance = BigDecimal.valueOf(3000L)
+    )
+
     val customerr = CostumerDTO(
             fistName =   "Miau",lastName= "Silva",
             cpf = "28475934625",
@@ -199,7 +214,8 @@ class CustomerControllerTest {
             zipCode = "3232",
             street = " rrererr ",
             income= BigDecimal.valueOf(1000.0),
-            passoword = "123414",
+            password = "123414",
+              account = account
             )
     val customerUpdate = CostumerDTO(
             fistName =   "Miaus",lastName= "Cat",
@@ -208,6 +224,7 @@ class CustomerControllerTest {
             zipCode = "00000002",
             street = "rua do cat",
             income= BigDecimal.valueOf(2500.0),
-            passoword = "123414",
+            password = "123414",
+            account = account
     )
 }

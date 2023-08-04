@@ -8,6 +8,9 @@ CREATE TABLE costumer (
    password VARCHAR(255) NOT NULL,
    zip_code VARCHAR(255) NOT NULL,
    street VARCHAR(255) NOT NULL,
+   account_free_balance DECIMAL,
+   balance_blocked DECIMAL,
+   number_account VARCHAR(255),
    CONSTRAINT pk_costumer PRIMARY KEY (id)
 );
 

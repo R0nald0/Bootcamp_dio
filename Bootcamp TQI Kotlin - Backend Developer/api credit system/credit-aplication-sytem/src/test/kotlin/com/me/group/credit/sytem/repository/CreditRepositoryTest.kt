@@ -1,5 +1,6 @@
 package com.me.group.credit.sytem.repository
 
+import com.me.group.credit.sytem.entity.Account
 import com.me.group.credit.sytem.entity.Address
 import com.me.group.credit.sytem.entity.Credit
 import com.me.group.credit.sytem.entity.Customer
@@ -9,13 +10,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.Month
 import java.util.*
 
 @ActiveProfiles("test")
@@ -38,7 +36,6 @@ class CreditRepositoryTest {
         credit1 = testeEntityManager.persist(buildCredit(customer = customer))
         credit2 = testeEntityManager.persist(buildCredit(customer = customer))
     }
-
  @Test
     fun `findByCreditCode_must search credit by credit code`(){
 
@@ -58,7 +55,7 @@ class CreditRepositoryTest {
 
     private fun buildCredit(
             creditValue: BigDecimal = BigDecimal.valueOf(500.0),
-            dayFirstInstallment: LocalDate = LocalDate.of(2023, Month.APRIL, 22),
+            dayFirstInstallment : Long = Date().time,
             numberOfInstallments: Int = 5,
             customer: Customer
     ): Credit = Credit(
@@ -68,44 +65,53 @@ class CreditRepositoryTest {
             customer = customer
     )
 
+    val account = Account(
+        numberAccount =Random().nextLong(100000,999999),
+        accountBalanceBlocked = BigDecimal.valueOf(2000L),
+        movements = mutableListOf(),
+        accountFreeBalance = BigDecimal.valueOf(3000L)
+    )
+    fun buildCustomer() =Customer(
+        fistName =   "Miau",lastName= "Silva",
+        cpf = "28475934625",
+        email= "miau@email.com",
+        password = "12345",
+        address = Address(
+            zipCode = "3232",
+            street = " rrererr "
+        ),
+        income= BigDecimal.valueOf(1000.0),
+        account = account
+
+    )
+
+    val listCredit = listOf(
+        Credit(
+            creditValue = 1234.3.toBigDecimal(),
+            customer = buildCustomer(), id = 0,
+            status = Status.IN_PROGRESS,
+            numberOfInstallments = 2,
+            dayFirstInstallment = Date().time,
+            creditCode = UUID.randomUUID()
+        ),
+        Credit(
+            creditValue = 1340.3.toBigDecimal(),
+            customer = buildCustomer(), id = 0,
+            status = Status.IN_PROGRESS,
+            numberOfInstallments = 3,
+            dayFirstInstallment = Date().time,
+            creditCode = UUID.randomUUID()
+        ),
+        Credit(
+            creditValue = 4990.3.toBigDecimal(),
+            customer = buildCustomer(), id = 0,
+            status = Status.IN_PROGRESS,
+            numberOfInstallments = 3,
+            dayFirstInstallment = Date().time,
+            creditCode = UUID.randomUUID()
+        )
+    )
 
 }
-fun buildCustomer() =Customer(
-       fistName =   "Miau",lastName= "Silva",
-cpf = "28475934625",
-email= "miau@email.com",
-password = "12345",
-        address = Address(
-                zipCode = "3232",
-                street = " rrererr "
-        ),
-income= BigDecimal.valueOf(1000.0),
 
-)
 
-val listCredit = listOf(
-        Credit(
-                creditValue = 1234.3.toBigDecimal(),
-                customer = buildCustomer(), id = 0,
-                status = Status.IN_PROGRESS,
-                numberOfInstallments = 2,
-                dayFirstInstallment = LocalDate.now(),
-                creditCode = UUID.randomUUID()
-        ),
-        Credit(
-                creditValue = 1340.3.toBigDecimal(),
-                customer = buildCustomer(), id = 0,
-                status = Status.IN_PROGRESS,
-                numberOfInstallments = 3,
-                dayFirstInstallment = LocalDate.now(),
-                creditCode = UUID.randomUUID()
-        ),
-        Credit(
-                creditValue = 4990.3.toBigDecimal(),
-                customer = buildCustomer(), id = 0,
-                status = Status.IN_PROGRESS,
-                numberOfInstallments = 3,
-                dayFirstInstallment = LocalDate.now(),
-                creditCode = UUID.randomUUID()
-        )
-)

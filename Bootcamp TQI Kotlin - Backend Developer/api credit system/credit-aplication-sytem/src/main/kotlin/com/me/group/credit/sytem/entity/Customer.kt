@@ -1,7 +1,5 @@
 package com.me.group.credit.sytem.entity
 
-import com.me.group.credit.sytem.dto.CostumerDTO
-import com.me.group.credit.sytem.dto.CustomerView
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -31,17 +29,11 @@ data class Customer(
                )
        var credits : List<Credit> = mutableListOf(),
 
+        @Embedded
+        var account : Account,
+
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id : Long ? = null
 )
 
-fun Customer.toView() = CustomerView(
-        fistName = this.fistName,
-        lastName = this.lastName,
-        cpf = this.cpf,
-        street = this.address.street,
-        income = this.income,
-        email = this.email,
-        zipCode = this.address.zipCode
-)

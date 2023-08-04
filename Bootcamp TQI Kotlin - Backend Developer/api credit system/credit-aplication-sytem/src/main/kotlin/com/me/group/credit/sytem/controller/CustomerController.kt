@@ -1,31 +1,36 @@
 package com.me.group.credit.sytem.controller
 
 import com.me.group.credit.sytem.dto.*
-import com.me.group.credit.sytem.entity.toView
+import com.me.group.credit.sytem.dto.response.CustomerView
+import com.me.group.credit.sytem.entity.AccountMovement
+import com.me.group.credit.sytem.enums.TitulosMovimentacao
 import com.me.group.credit.sytem.service.ICustomerService
+import com.me.group.credit.sytem.service.serviceImpl.AccountMovimentService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
+import java.util.*
 
 @RestController
 @RequestMapping("/api/customers")
 class CustomerController(
-        private val serviceCustomer : ICustomerService
+        private val serviceCustomer : ICustomerService,
+        private val accountMovimentService:AccountMovimentService
 ) {
 
     @PostMapping("/save")
     fun saveCustomer(@RequestBody @Valid costumerDTO :CostumerDTO):ResponseEntity<CustomerView>{
     val customer =  serviceCustomer.save(costumerDTO.toEnttity())
-      return  ResponseEntity.status(HttpStatus.CREATED).body(customer.toView())
+      return  ResponseEntity.status(HttpStatus.CREATED).body(CustomerView(customer))
+    }
+
+    @GetMapping("/")
+    fun findCustomerByEmail(@RequestParam(value = "email") email:String):ResponseEntity<CustomerView>{
+          val customer =serviceCustomer.findCustomerByEmail(email)
+          val customerView = CustomerView(customer)
+         return ResponseEntity.status(HttpStatus.OK).body(customerView)
     }
 
     @GetMapping("/{id}")
@@ -42,14 +47,27 @@ class CustomerController(
     }
 
     @PatchMapping
-    fun upadteCosutumer(@RequestParam(value = "customerId") id:Long,
-                        @RequestBody costumeUpdate: CostumerUpdateDT0):ResponseEntity<CustomerView>{
+    fun updateCustomer(@RequestParam(value = "customerId") id:Long,
+                       @RequestBody costumeUpdate: CostumerUpdateDT0):ResponseEntity<CustomerView>{
        val customer= serviceCustomer.findById(id).apply {
              costumeUpdate.toEntity(this)
          }
-       val custemerUpadte = serviceCustomer.save(customer)
+        val custemerUpadte = serviceCustomer.save(customer)
         val custumerView = CustomerView(custemerUpadte)
-        return ResponseEntity.status(HttpStatus.OK).body(custumerView)
 
+        return ResponseEntity.status(HttpStatus.OK).body(custumerView)
+    }
+
+    @PatchMapping("/update/{idCustomer}")
+    fun upadateAccount(
+        @PathVariable idCustomer:Long,
+        @RequestParam(value = "valor" ) valorEntrada: BigDecimal,
+        @RequestParam(value = "type") type : TitulosMovimentacao
+    ):ResponseEntity<CustomerView>{
+        val customer  =serviceCustomer.findById(idCustomer)
+        val upadateAccount = serviceCustomer.upadateAccount(valorEntrada,customer, type)
+        val accountMovement = AccountMovement(id = -1, upadateAccount, Date().time, type, valorEntrada)
+        accountMovimentService.saveAccountMoviment(accountMovement)
+        return ResponseEntity.status(HttpStatus.OK).body(CustomerView(upadateAccount))
     }
 }
