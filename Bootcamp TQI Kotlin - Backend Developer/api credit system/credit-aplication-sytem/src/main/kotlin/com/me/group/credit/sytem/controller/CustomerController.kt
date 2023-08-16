@@ -26,7 +26,15 @@ class CustomerController(
       return  ResponseEntity.status(HttpStatus.CREATED).body(CustomerView(customer))
     }
 
-    @GetMapping("/")
+    @GetMapping("/findaccountnumber")
+  fun getcustomerByAccountNumber(
+         @RequestParam(value = "accountNumber") accountNumber : Long
+  ): ResponseEntity<CustomerView>{
+        val customerByAccountNumber = serviceCustomer.getCustomerByAccountNumber(accountNumber)
+        val customerView = CustomerView(customerByAccountNumber)
+        return  ResponseEntity.status(HttpStatus.OK).body(customerView)
+  }
+    @GetMapping("/findemail")
     fun findCustomerByEmail(@RequestParam(value = "email") email:String):ResponseEntity<CustomerView>{
           val customer =serviceCustomer.findCustomerByEmail(email)
           val customerView = CustomerView(customer)
@@ -66,7 +74,12 @@ class CustomerController(
     ):ResponseEntity<CustomerView>{
         val customer  =serviceCustomer.findById(idCustomer)
         val upadateAccount = serviceCustomer.upadateAccount(valorEntrada,customer, type)
-        val accountMovement = AccountMovement(id = -1, upadateAccount, Date().time, type, valorEntrada)
+        val accountMovement = AccountMovimentDTO(
+                idCustomer = upadateAccount.id!!,
+                Date().time,
+                type,
+                valorEntrada
+        )
         accountMovimentService.saveAccountMoviment(accountMovement)
         return ResponseEntity.status(HttpStatus.OK).body(CustomerView(upadateAccount))
     }

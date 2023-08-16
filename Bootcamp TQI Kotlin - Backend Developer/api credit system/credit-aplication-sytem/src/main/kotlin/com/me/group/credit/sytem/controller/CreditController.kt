@@ -29,10 +29,13 @@ class CreditController(
    fun saveCredit(@RequestBody  @Valid creditDTO: CreditDTO):ResponseEntity<CreditView>{
         val credit = creditService.save(creditDTO)
         serviceCustomer.upadateAccount(credit.creditValue,credit.customer!!, TitulosMovimentacao.PEDIDO_EMPRESTIMO)
+
         val accountMoviment  =AccountMovimentDTO(credit.customer?.id!!,Date().time,TitulosMovimentacao.PEDIDO_EMPRESTIMO,credit.creditValue)
-        accountMovimentService.saveAccountMoviment(accountMoviment.toAccountMoviment())
+
+        accountMovimentService.saveAccountMoviment(accountMoviment)
         return ResponseEntity.status(HttpStatus.CREATED).body(CreditView(credit))
    }
+
     @GetMapping("/limitDate")
     fun getDateMinimun():ResponseEntity<String>{
         val dateMinimunLimit =  creditService.getDateLimit()
@@ -64,7 +67,7 @@ class CreditController(
     ):ResponseEntity<CreditView>{
         val resultCredit  = creditService.updateStateCredit(creditId,creditDTO.customerId,creditState)
         return ResponseEntity.status(HttpStatus.OK).body(CreditView(resultCredit!!))
-        //TODO verificar nulidade
+        //TODO verificar nullidade
     }
 
 }

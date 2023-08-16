@@ -3,7 +3,6 @@ package com.me.group.credit.sytem.controller
 import com.me.group.credit.sytem.dto.AccountMovimentDTO
 import com.me.group.credit.sytem.dto.response.AccountMovimentView
 import com.me.group.credit.sytem.dto.toAccountMoviment
-import com.me.group.credit.sytem.entity.AccountMovement
 import com.me.group.credit.sytem.service.IAccountMovimentService
 import com.me.group.credit.sytem.service.ICustomerService
 import jakarta.validation.Valid
@@ -15,13 +14,11 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/movimentation")
 class AccountMovimentController(
     private val accountMovimentService: IAccountMovimentService,
-    private val customerServiceImpl: ICustomerService
 ) {
 
     @PostMapping("/save")
-    fun saveAccountMoviment(@RequestBody @Valid accountMoviment:AccountMovimentDTO):ResponseEntity<AccountMovimentView>{
-        val toAccountMoviment = accountMoviment.toAccountMoviment()
-        val savedAccountMoviment = accountMovimentService.saveAccountMoviment(toAccountMoviment)
+    fun saveAccountMoviment(@RequestBody  accountMovimentDTO:AccountMovimentDTO):ResponseEntity<AccountMovimentView>{
+        val savedAccountMoviment = accountMovimentService.saveAccountMoviment(accountMovimentDTO)
         return ResponseEntity.status(HttpStatus.CREATED).body(AccountMovimentView(savedAccountMoviment))
     }
 

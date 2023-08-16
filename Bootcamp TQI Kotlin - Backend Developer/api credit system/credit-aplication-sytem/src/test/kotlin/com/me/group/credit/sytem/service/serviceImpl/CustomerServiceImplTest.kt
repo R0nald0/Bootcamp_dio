@@ -14,7 +14,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +33,7 @@ class CustomerServiceImplTest {
      lateinit var  accountMovimentRepository: AccountMovimentRepository
 
     @InjectMockKs
-    lateinit var customerServiceImpl: CustomerServiceImpl
+    lateinit var customerServiceImplMock: CustomerServiceImpl
     @BeforeEach
     fun setUp() {
        //  customerServiceImpl= CustomerServiceImpl(repositoryCustomer,creditRepository)
@@ -44,7 +43,7 @@ class CustomerServiceImplTest {
     fun `save must return a Customer`(){
 
         every { repositoryCustomer.save(any())}returns customer
-        val customerReturn = customerServiceImpl.save(customer)
+        val customerReturn = customerServiceImplMock.save(customer)
 
         Assertions.assertThat(customerReturn).isNotNull
         Assertions.assertThat(customerReturn.fistName).isEqualTo("Miau")
@@ -56,7 +55,7 @@ class CustomerServiceImplTest {
     fun `findById  must find customer by id and return`(){
         every { repositoryCustomer.findById(1) }returns Optional.of(customer)
 
-        val optionalCustumer = customerServiceImpl.findById(1)
+        val optionalCustumer = customerServiceImplMock.findById(1)
         Assertions.assertThat(optionalCustumer).isNotNull()
         Assertions.assertThat(optionalCustumer).isSameAs(customer)
         Assertions.assertThat(optionalCustumer).isInstanceOf(Customer::class.java)
@@ -69,11 +68,28 @@ class CustomerServiceImplTest {
     }
 
     @Test
+    fun `getCustomerByAccountNumber_should return customer by your account number`() {
+          every { repositoryCustomer.findByAccount(any())  } returns (customer)
+
+        //when
+        val customerByAccountNumber = customerServiceImplMock.getCustomerByAccountNumber(999999)
+        Assertions.assertThat(customerByAccountNumber.fistName).isEqualTo("Miau")
+        Assertions.assertThat(customerByAccountNumber.email).isEqualTo("miau@email.com")
+        Assertions.assertThat(customerByAccountNumber.cpf).isEqualTo("03656811806")
+
+        verify(exactly = 1){repositoryCustomer.findByAccount(any())}
+
+
+        //TODO see teste error
+
+    }
+
+    @Test
     fun `findById must throw BusinessException when id invalid`(){
         every { repositoryCustomer.findById(1) }returns Optional.empty()
 
         Assertions.assertThatExceptionOfType(BusinessException::class.java).isThrownBy {
-            customerServiceImpl.findById(1)
+            customerServiceImplMock.findById(1)
         }.withMessage("id 1 not found")
         verify(exactly = 1) { repositoryCustomer.findById(1) }
     }
@@ -83,7 +99,7 @@ fun `delete must delete customer by id`(){
        every { repositoryCustomer.findById(1) }returns Optional.of(customer)
        every {repositoryCustomer.delete(customer) } just runs
 
-     val resul = customerServiceImpl.delete(1)
+     val resul = customerServiceImplMock.delete(1)
      Assertions.assertThat(resul).isTrue()
 
     verify(exactly = 1) { repositoryCustomer.findById(1) }
@@ -97,9 +113,8 @@ fun `delete must throw a Businesse exception when credit have status approved`()
     every { repositoryCustomer.findById(1) }returns Optional.of(customer)
     every {repositoryCustomer.delete(customer) } just runs
 
-    //val resul = customerServiceImpl.delete(1)
     Assertions.assertThatExceptionOfType(BusinessException::class.java).isThrownBy {
-         customerServiceImpl.delete(1)
+         customerServiceImplMock.delete(1)
     }.withMessage("Customer ${customer.fistName} have pending Crédit")
     verify (exactly = 1) {repositoryCustomer.findById(1)}
     verify (exactly = 1) {creditRepository.findAllByCustomer(1)}
@@ -110,7 +125,7 @@ fun `delete must throw a Businesse exception when credit have status approved`()
          val email= "miau@email.com"
           every { repositoryCustomer.findByEmail(email) } returns customer
 
-       val customerResultMock =   customerServiceImpl.findCustomerByEmail(email)
+       val customerResultMock =   customerServiceImplMock.findCustomerByEmail(email)
         Assertions.assertThat(customerResultMock).isNotNull
         Assertions.assertThat(customerResultMock.fistName).isEqualTo("Miau")
         Assertions.assertThat(customerResultMock).isInstanceOf(Customer::class.java)
@@ -127,7 +142,7 @@ fun `delete must throw a Businesse exception when credit have status approved`()
          every { repositoryCustomer.findByEmail(email) } returns null
 
        Assertions.assertThatExceptionOfType(BusinessException::class.java).isThrownBy {
-           customerServiceImpl.findCustomerByEmail(email)
+           customerServiceImplMock.findCustomerByEmail(email)
        }.withMessage("customer not find by email: $email")
         verify(exactly = 1 ){repositoryCustomer.findByEmail(email)}
     }
@@ -136,7 +151,7 @@ fun `delete must throw a Businesse exception when credit have status approved`()
     fun `upadateAccount_must upadate account`() {
          every { repositoryCustomer.save(any()) }.returns(customer)
 
-        val upadateAccount = customerServiceImpl.upadateAccount(
+        val upadateAccount = customerServiceImplMock.upadateAccount(
             BigDecimal.valueOf(200), customer, TitulosMovimentacao.PEDIDO_EMPRESTIMO
         )
         Assertions.assertThat(upadateAccount.account.accountBalanceBlocked).isEqualTo(BigDecimal.valueOf(200))

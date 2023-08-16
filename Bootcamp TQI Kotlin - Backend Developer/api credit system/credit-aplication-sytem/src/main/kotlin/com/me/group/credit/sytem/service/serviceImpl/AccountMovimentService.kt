@@ -1,5 +1,7 @@
 package com.me.group.credit.sytem.service.serviceImpl
 
+import com.me.group.credit.sytem.dto.AccountMovimentDTO
+import com.me.group.credit.sytem.dto.toAccountMoviment
 import com.me.group.credit.sytem.entity.AccountMovement
 import com.me.group.credit.sytem.exeception.BusinessException
 import com.me.group.credit.sytem.repository.AccountMovimentRepository
@@ -13,8 +15,9 @@ class AccountMovimentService(
     private val accountMovimentRepository:AccountMovimentRepository,
     private val  customerServiceImpl: ICustomerService
 ) :IAccountMovimentService {
-    override fun saveAccountMoviment(accountMoviment: AccountMovement): AccountMovement {
-       return accountMovimentRepository.save(accountMoviment)
+    override fun saveAccountMoviment(accountMovimentDTO: AccountMovimentDTO): AccountMovement {
+        val accountMovement = accountMovimentDTO.toAccountMoviment()
+        return accountMovimentRepository.save(accountMovement)
 
     }
 

@@ -1,5 +1,6 @@
 package com.me.group.credit.sytem.service.serviceImpl
 
+import com.me.group.credit.sytem.dto.AccountMovimentDTO
 import com.me.group.credit.sytem.entity.Account
 import com.me.group.credit.sytem.entity.AccountMovement
 import com.me.group.credit.sytem.entity.Address
@@ -45,7 +46,7 @@ class AccountMovimentServiceImplTest {
     fun `saveAccountMoviment_mustSave movimentation by account`() {
 
         every { accounntMovimentRepositoryMock.save(accountMovementMock) } returns accountMovementMock
-        val accountMovimentReturn =  accountMovimentImplMock.saveAccountMoviment(accountMovementMock)
+        val accountMovimentReturn =  accountMovimentImplMock.saveAccountMoviment(getAccounMovimentDto())
 
         Assertions.assertThat(accountMovimentReturn).isNotNull
         Assertions.assertThat(accountMovimentReturn.dateMoviment).isEqualTo(Date().convertDateStringToLong("17/07/2023")!!)
@@ -179,6 +180,12 @@ class AccountMovimentServiceImplTest {
         dateMoviment = Date().convertDateStringToLong("17/07/2023")!!,
         movimentValue = BigDecimal.valueOf(100L),
         type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+    )
+    fun getAccounMovimentDto() = AccountMovimentDTO(
+            dateMoviment = Date().time,
+            type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+            movimentValue = BigDecimal.valueOf(1300L),
+            idCustomer = 1
     )
 
 

@@ -12,10 +12,12 @@ import com.me.group.credit.sytem.repository.AccountMovimentRepository
 import com.me.group.credit.sytem.repository.CustomerRepository
 import com.me.group.credit.sytem.service.serviceImpl.AccountMovimentService
 import com.me.group.credit.sytem.service.serviceImpl.CustomerServiceImpl
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
@@ -25,10 +27,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.jmx.support.ObjectNameManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.client.match.MockRestRequestMatchers
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -43,20 +47,15 @@ import java.util.*
 @SpringBootTest
 @ContextConfiguration
 @ExtendWith(MockKExtension::class)
-class AccountMovimentControllerTest {
+class AccountMovimentControllerTest(
 
+) {
 
-    @Autowired
-    lateinit var customerRespositoryMockMvc:CustomerRepository
-
-    @MockK
+     @MockkBean
     lateinit var accountMovimentService: AccountMovimentService
 
-    @MockK
-    lateinit var customerServiceImpl: CustomerServiceImpl
-
     @Autowired
-    lateinit var mockMvc :MockMvc
+    lateinit var  mockMvc: MockMvc
 
     @Autowired
     lateinit var objectManager: ObjectMapper
@@ -64,29 +63,40 @@ class AccountMovimentControllerTest {
     companion object{
         const val URL_ACCOUNTMOVIMENT = "/api/movimentation"
     }
+
+    lateinit var accountMovimentcontroller : AccountMovimentController
+
   @BeforeEach
     fun setUp() {
-
+        accountMovimentcontroller = AccountMovimentController(accountMovimentService)
     }
 
     @Test
     fun `saveAccountMoviment_most return save customer e and return customer saved`() {
-           every { accountMovimentService
-               .saveAccountMoviment(any())}.returns(getAccounMovimentDto().toAccountMoviment())
+        val accountMovement = getAccounMoviment()
+        val movimentDto = getAccounMovimentDto()
+
+        every { accountMovimentService.saveAccountMoviment(any()) } returns accountMovement
 
         val asString = objectManager.writeValueAsString(getAccounMovimentDto())
+
         mockMvc.perform(MockMvcRequestBuilders.post("${URL_ACCOUNTMOVIMENT}/save")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asString)
         )
-            .andExpect(MockMvcResultMatchers.status().isCreated)
-           .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("PEDIDO_EMPRESTIMO"))
+           .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("PEDIDO_EMPRESTIMO"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.movimentValue").value("1300"))
             .andDo(MockMvcResultHandlers.print())
+
+
+
     }
-   @Test
+
+
+    @Test
     fun `getAllMovimentsAccount_should return all moviments by customer`() {
-         every { accountMovimentService.getAllAccontMovimentCostumer(1)}.returns(getAccountMoviments())
+         every { accountMovimentService.getAllAccontMovimentCostumer(any())} returns(getAccountMoviments())
 
              val idcustomer = 1L
              val stringId = objectManager.writeValueAsString(idcustomer)
@@ -95,31 +105,35 @@ class AccountMovimentControllerTest {
                .content(stringId)
            )
                .andExpect(MockMvcResultMatchers.status().isOk)
-               //.andExpect(MockMvcResultMatchers.jsonPath("$.].type").value("TitulosMovimentacao.TED"))
                .andDo(MockMvcResultHandlers.print())
     }
 
-        @Test
-        fun `getAccountMovimentById_should return a account moviment of the customer by id`() {
+
+    @Test
+    fun `getAccountMovimentById_should return a account moviment of the customer by id`() {
 
             every { accountMovimentService.findAccountMoviment(1,1)}
                 .returns(getAccountMoviments()[0])
             val valueAsString = objectManager.writeValueAsString(1)
+
             mockMvc.perform(MockMvcRequestBuilders
                 .get("$URL_ACCOUNTMOVIMENT/accountmoviments/1?idmoviment=1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(valueAsString)
                 .content("1")
             ).andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("TitulosMovimentacao.TED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("TED"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.movimentValue").value(1230.0))
                 .andDo(MockMvcResultHandlers.print())
         }
+
 
     @AfterEach
     fun tearDown() {
 
     }
+
+
     fun getAccount() = Account(
         numberAccount = Random().nextLong(100000,999999),
         accountBalanceBlocked = BigDecimal.valueOf(2000L),
@@ -160,6 +174,12 @@ class AccountMovimentControllerTest {
        type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
        movimentValue = BigDecimal.valueOf(1300L),
        idCustomer = 1
+   )
+    fun getAccounMoviment() =AccountMovement(
+       dateMoviment = Date().time,
+       type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+       movimentValue = BigDecimal.valueOf(1300L),
+       customer = buildCustomer()
    )
 
 }

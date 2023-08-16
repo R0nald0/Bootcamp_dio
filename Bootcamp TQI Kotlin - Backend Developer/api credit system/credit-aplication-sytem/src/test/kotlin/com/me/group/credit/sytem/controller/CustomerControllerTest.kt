@@ -188,7 +188,7 @@ class CustomerControllerTest {
           val customerMock = customerRepository.save(customerr.toEnttity())
          val customerDTOString = objectManager.writeValueAsString(customerMock)
 
-        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/?email=${customerMock.email}")
+        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/findemail?email=${customerMock.email}")
             .contentType(MediaType.APPLICATION_JSON)
             .content(customerMock.email)
         ).andExpect(MockMvcResultMatchers.status().isOk)

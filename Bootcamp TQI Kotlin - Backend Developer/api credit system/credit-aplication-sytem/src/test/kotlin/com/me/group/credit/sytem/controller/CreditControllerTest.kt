@@ -66,7 +66,9 @@ class CreditControllerTest {
            ).contentType(MediaType.APPLICATION_JSON)
             .content(stringCreditDto))
             .andExpect(MockMvcResultMatchers.status().isCreated)
-           // .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value("1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.idCustomer").value("1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.creditValue").value("1234.3"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfInstallment").value(2))
             .andDo(MockMvcResultHandlers.print())
     }
 
@@ -90,6 +92,7 @@ class CreditControllerTest {
             val creditCodeMock = creditRepositoryMock.save(credit.copy(customer = customerMock, creditCode = uuid))
             val creditCodeString  =objectMapper.writeValueAsString(uuid)
             val customerIdString  =objectMapper.writeValueAsString(customerMock.id)
+
             mockMvc.perform(MockMvcRequestBuilders.get("$URL_CREDIT/credit/${uuid}?customerId=${customerMock.id}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(creditCodeString)
@@ -98,8 +101,8 @@ class CreditControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.creditValue").value("1234.3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfInstallment").value("2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("IN_PROGRESS"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.emailCustomer").value("miau@email.com"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.incomeCustomer").value("3000.0"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.idCustomer").value(1))
+
                 .andDo(MockMvcResultHandlers.print())
     }
 
@@ -190,7 +193,6 @@ class CreditControllerTest {
             mutableListOf(),
             account=getAccount(),
             getCustomer().id,
-
             ),
         id =1,
         status = Status.IN_PROGRESS,
@@ -203,7 +205,7 @@ class CreditControllerTest {
         creditValue = 1234.3.toBigDecimal(),
         customerId = 1,
         numberOfInstallment = 2,
-        dayOfInstallment = LocalDate.now().plusMonths(1).toString(),
+        dayOfInstallment = "15/08/2023",
     )
 
 

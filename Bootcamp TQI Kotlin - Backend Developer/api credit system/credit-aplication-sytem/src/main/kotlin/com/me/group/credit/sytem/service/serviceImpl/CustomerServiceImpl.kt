@@ -15,8 +15,23 @@ class CustomerServiceImpl(
         private val custumerRepository: CustomerRepository,
         private val creditRepository: CreditRepository,
 ):ICustomerService {
+
     override fun save(customer: Customer): Customer {
         return custumerRepository.save(customer)
+    }
+
+    override fun getCustomerByAccountNumber(accountNumber: Long): Customer {
+        try {
+            val byAccount = custumerRepository.findByAccount(accountNumber)
+           if (byAccount != null){
+               if (byAccount.account.numberAccount == accountNumber){
+                   return byAccount
+               }
+           }
+            throw BusinessException("customer not found by account number: $accountNumber")
+        }catch (businessException:BusinessException){
+            throw BusinessException("fail to get account number $accountNumber")
+        }
     }
 
     override fun findCustomerByEmail(email: String): Customer {
