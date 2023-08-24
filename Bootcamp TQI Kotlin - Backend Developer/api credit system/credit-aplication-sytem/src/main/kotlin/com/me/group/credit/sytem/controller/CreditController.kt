@@ -62,10 +62,11 @@ class CreditController(
     @PatchMapping("/update/{creditId}")
     fun updateStateCredit(
         @PathVariable creditId: Long,
-        @RequestBody  creditDTO: CreditDTO,
-        @RequestParam(value = "stateCredit") creditState : Status,
+        @RequestParam(value = "customerId")  customerid :Long,
+        @RequestBody creditState : Status,
     ):ResponseEntity<CreditView>{
-        val resultCredit  = creditService.updateStateCredit(creditId,creditDTO.customerId,creditState)
+
+        val resultCredit  = creditService.updateStateCredit(creditId,customerid,creditState)
         return ResponseEntity.status(HttpStatus.OK).body(CreditView(resultCredit!!))
         //TODO verificar nullidade
     }
