@@ -17,25 +17,26 @@ class CreditService(
         private val creditRepository : CreditRepository,
         private val costumerService : CustomerServiceImpl
 ) :ICreditService {
+
+
     override fun save(creditDTO: CreditDTO): Credit {
         val dateStringToLong = LocalDate.parse(creditDTO.dayOfInstallment, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        val data = dateStringToLong
         val dataLimit = LocalDate.now().plusMonths(3L)
 
-        if (data <= dataLimit) {
+        if (dateStringToLong <= dataLimit) {
             val d = Date().convertDateStringToLong(creditDTO.dayOfInstallment)!!
             val credit = Credit(
-                dayFirstInstallment = d,
-                creditValue = creditDTO.creditValue,
-                numberOfInstallments = creditDTO.numberOfInstallment,
-                customer = costumerService.findById(creditDTO.customerId)
+                    dayFirstInstallment = d,
+                    creditValue = creditDTO.creditValue,
+                    numberOfInstallments = creditDTO.numberOfInstallment,
+                    customer = costumerService.findById(creditDTO.customerId)
             )
+
             credit.apply {
                 this.customer = costumerService.findById(credit.customer?.id!!)
             }
-          val creditSaved =  creditRepository.save(credit)
 
-           return creditSaved
+            return creditRepository.save(credit)
         } else {
             throw BusinessException("the date must be on maximum three month forward")
         }
@@ -60,15 +61,17 @@ class CreditService(
 
         override fun findCreditCustomerById(idCredit: Long, idCustomer: Long): Credit? {
             try {
-                val creditList = findAllByCostumer(idCustomer).filter { credit ->
-                    if (credit.id == idCredit) {
-                        return credit
-                    } else {
-                        return null
-                    }
+                val creditList = findAllByCostumer(idCustomer)
+                if (creditList.isEmpty()) return null
+
+              val creditBylist = creditList.filter{credit->
+                    credit.id == idCredit
                 }
-                return creditList[0]
-            } catch (businessException: BusinessException) {
+                return creditBylist[0]
+            } catch (indexOfB : IndexOutOfBoundsException){
+                throw IndexOutOfBoundsException("id do credito não encontrado")
+            }
+            catch (businessException: BusinessException) {
                 throw BusinessException("${idCredit} is null or credit not valid")
             }
         }
@@ -81,12 +84,17 @@ class CreditService(
             else throw IllegalArgumentException("credit is not found for this User")
         }
 
+
         override fun updateStateCredit(idCredit: Long, idCustomer: Long, st: Status): Credit? {
             try {
                 val credit = findCreditCustomerById(idCredit, idCustomer)
                 val creditUpdate = credit?.copy(status = st)
                 if (creditUpdate != null) {
-                    return creditRepository.save(creditUpdate)
+                   val creditUpadated  = creditRepository.save(creditUpdate)
+                    if (creditUpadated != null) {
+                        costumerService.upadateStateAccount(creditUpadated.creditValue, creditUpadated.customer!!, st)
+                    }
+                    return  creditUpadated
                 }
                 return null
             } catch (busissnesException: BusinessException) {

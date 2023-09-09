@@ -4,7 +4,7 @@ import com.me.group.credit.sytem.entity.Account
 import com.me.group.credit.sytem.entity.AccountMovement
 import com.me.group.credit.sytem.entity.Address
 import com.me.group.credit.sytem.entity.Customer
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
+import com.me.group.credit.sytem.enums.MovimentationType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,7 +45,7 @@ class AccountMovimentRepositoryTest {
 
         Assertions.assertThat(listaAccountMovement).isNotEmpty
         Assertions.assertThat(listaAccountMovement).hasSize(2)
-        Assertions.assertThat(listaAccountMovement[0].type).isEqualTo(TitulosMovimentacao.TED)
+        Assertions.assertThat(listaAccountMovement[0].type).isEqualTo(MovimentationType.TED)
     }
     fun getAccount() = Account(
         numberAccount = Random().nextLong(100000,999999),
@@ -69,13 +69,13 @@ class AccountMovimentRepositoryTest {
 
   fun accountMovement1() = AccountMovement(
     dateMoviment = Date().time,
-    type = TitulosMovimentacao.TED,
+    type = MovimentationType.TED,
     movimentValue = "1230.0".toBigDecimal(),
     customer = customer
     )
      fun getAccountMovement() = AccountMovement(
          dateMoviment = Date().time,
-         type = TitulosMovimentacao.PIX,
+         type = MovimentationType.PIX,
          movimentValue = "3230.0".toBigDecimal(),
         customer = customer
      )

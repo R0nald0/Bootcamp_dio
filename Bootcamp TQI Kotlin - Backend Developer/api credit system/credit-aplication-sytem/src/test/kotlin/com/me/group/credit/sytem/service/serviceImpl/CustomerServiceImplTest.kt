@@ -2,7 +2,7 @@ package com.me.group.credit.sytem.service.serviceImpl
 
 import com.me.group.credit.sytem.entity.*
 import com.me.group.credit.sytem.enums.Status
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.exeception.BusinessException
 import com.me.group.credit.sytem.extension.convertDateStringToLong
 import com.me.group.credit.sytem.repository.AccountMovimentRepository
@@ -23,7 +23,7 @@ import java.util.*
 
 @ActiveProfiles("test")
 @ExtendWith(MockKExtension::class)
-class CustomerServiceImplTest {
+class  CustomerServiceImplTest {
 
     @MockK
     lateinit var  repositoryCustomer : CustomerRepository
@@ -152,13 +152,24 @@ fun `delete must throw a Businesse exception when credit have status approved`()
          every { repositoryCustomer.save(any()) }.returns(customer)
 
         val upadateAccount = customerServiceImplMock.upadateAccount(
-            BigDecimal.valueOf(200), customer, TitulosMovimentacao.PEDIDO_EMPRESTIMO
+            BigDecimal.valueOf(200), customer, MovimentationType.PEDIDO_EMPRESTIMO
         )
         Assertions.assertThat(upadateAccount.account.accountBalanceBlocked).isEqualTo(BigDecimal.valueOf(200))
         Assertions.assertThat(upadateAccount.account.accountFreeBalance).isEqualTo(BigDecimal.valueOf(0))
         verify(exactly = 1){ repositoryCustomer.save(any())}
 
     }
+    @Test
+     fun `upadateStateAccount_must return customer with account balances upadted`(){
+           every { repositoryCustomer.save(any()) }.returns(customer)
+
+           val upadteCus = customerServiceImplMock.upadateStateAccount(BigDecimal.valueOf(100.00),customer,Status.APPROVED)
+
+        Assertions.assertThat(upadteCus.account.accountFreeBalance).isEqualTo("100.0")
+        Assertions.assertThat(upadteCus.account.accountBalanceBlocked).isEqualTo("0")
+        Assertions.assertThat(upadteCus.account.numberAccount).isEqualTo("999999".toLong())
+
+     }
 
     @AfterEach
     fun tearDown() {}
@@ -168,7 +179,7 @@ fun `delete must throw a Businesse exception when credit have status approved`()
              numberAccount =999999,
              accountBalanceBlocked = BigDecimal.valueOf(0),
              movements = mutableListOf(),
-             accountFreeBalance = BigDecimal.valueOf(0)
+             accountFreeBalance = BigDecimal.valueOf(100.00)
          )
      }
 
@@ -190,7 +201,7 @@ fun `delete must throw a Businesse exception when credit have status approved`()
 
     val accountMoviment = AccountMovement(
         dateMoviment = Date().time,
-        type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+        type = MovimentationType.PEDIDO_EMPRESTIMO,
         id = 1,
         movimentValue = "1300".toBigDecimal(),
         customer = customer

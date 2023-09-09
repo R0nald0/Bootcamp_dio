@@ -2,8 +2,7 @@ package com.me.group.credit.sytem.controller
 
 import com.me.group.credit.sytem.dto.*
 import com.me.group.credit.sytem.dto.response.CustomerView
-import com.me.group.credit.sytem.entity.AccountMovement
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.service.ICustomerService
 import com.me.group.credit.sytem.service.serviceImpl.AccountMovimentService
 import jakarta.validation.Valid
@@ -28,8 +27,8 @@ class CustomerController(
 
     @GetMapping("/findaccountnumber")
   fun getcustomerByAccountNumber(
-         @RequestParam(value = "accountNumber") accountNumber : Long
-  ): ResponseEntity<CustomerView>{
+         @RequestParam(value = "accountNumber") accountNumber : Long):ResponseEntity<CustomerView>{
+
         val customerByAccountNumber = serviceCustomer.getCustomerByAccountNumber(accountNumber)
         val customerView = CustomerView(customerByAccountNumber)
         return  ResponseEntity.status(HttpStatus.OK).body(customerView)
@@ -68,17 +67,17 @@ class CustomerController(
 
     @PatchMapping("/update/{idCustomer}")
     fun upadateAccount(
-        @PathVariable idCustomer:Long,
-        @RequestParam(value = "valor" ) valorEntrada: BigDecimal,
-        @RequestParam(value = "type") type : TitulosMovimentacao
+            @PathVariable idCustomer:Long,
+            @RequestParam(value = "amountEntry" ) amountEntry: BigDecimal,
+            @RequestParam(value = "type") type : MovimentationType
     ):ResponseEntity<CustomerView>{
         val customer  =serviceCustomer.findById(idCustomer)
-        val upadateAccount = serviceCustomer.upadateAccount(valorEntrada,customer, type)
+        val upadateAccount = serviceCustomer.upadateAccount(amountEntry,customer, type)
         val accountMovement = AccountMovimentDTO(
                 idCustomer = upadateAccount.id!!,
                 Date().time,
                 type,
-                valorEntrada
+                amountEntry
         )
         accountMovimentService.saveAccountMoviment(accountMovement)
         return ResponseEntity.status(HttpStatus.OK).body(CustomerView(upadateAccount))

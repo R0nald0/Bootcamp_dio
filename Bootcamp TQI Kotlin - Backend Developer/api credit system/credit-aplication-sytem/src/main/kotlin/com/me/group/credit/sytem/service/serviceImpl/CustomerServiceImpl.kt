@@ -2,7 +2,7 @@ package com.me.group.credit.sytem.service.serviceImpl
 
 import com.me.group.credit.sytem.entity.Customer
 import com.me.group.credit.sytem.enums.Status
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.exeception.BusinessException
 import com.me.group.credit.sytem.repository.CreditRepository
 import com.me.group.credit.sytem.repository.CustomerRepository
@@ -42,7 +42,8 @@ class CustomerServiceImpl(
         throw BusinessException("customer not find by email: $email")
     }
     override fun findById(idCustomer: Long): Customer {
-    return    custumerRepository.findById(idCustomer).orElseThrow{
+
+        return  custumerRepository.findById(idCustomer).orElseThrow{
             throw BusinessException("id ${idCustomer} not found")
         }
     }
@@ -62,9 +63,9 @@ class CustomerServiceImpl(
 
     }
 
-    override fun upadateAccount(valorEntrada: BigDecimal, customer: Customer, typrEntry : TitulosMovimentacao):Customer {
+    override fun upadateAccount(valorEntrada: BigDecimal, customer: Customer, typrEntry : MovimentationType):Customer {
         try {
-            if (typrEntry == TitulosMovimentacao.PEDIDO_EMPRESTIMO) {
+            if (typrEntry == MovimentationType.PEDIDO_EMPRESTIMO) {
                 customer.account.accountBalanceBlocked += valorEntrada
             }else{
                 customer.account.accountFreeBalance += valorEntrada
@@ -76,6 +77,25 @@ class CustomerServiceImpl(
         } catch (businessExption: BusinessException) {
             throw BusinessException("fail when entry value")
         }
+    }
+
+    override fun upadateStateAccount(creditValue:BigDecimal,customer: Customer,status: Status): Customer {
+        try {
+          //  val customerById = findById(customer.id!!)
+            if (status == Status.APPROVED) {
+                 customer.account.accountBalanceBlocked -= creditValue
+                 customer.account.accountFreeBalance  += creditValue
+
+            } else if (status == Status.REJECT) {
+                customer.account.accountBalanceBlocked -= creditValue
+            }
+
+            return custumerRepository.save(customer)
+
+        } catch (businessExption: BusinessException) {
+            throw BusinessException("fail when entry value")
+        }
+
     }
 
 

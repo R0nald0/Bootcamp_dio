@@ -1,5 +1,5 @@
 package com.me.group.credit.sytem.enums
 
-enum class TitulosMovimentacao {
+enum class MovimentationType {
     PEDIDO_EMPRESTIMO,PIX,PAGAMENTO_BOLETO,TED
 }

@@ -39,7 +39,7 @@ class CreditRepositoryTest {
  @Test
     fun `findByCreditCode_must search credit by credit code`(){
 
-       val fakeCredit = creditRepository.findByCreditCode(creditCode = credit1.creditCode)!!
+        val fakeCredit = creditRepository.findByCreditCode(creditCode = credit1.creditCode)!!
         Assertions.assertThat(fakeCredit).isNotNull
         Assertions.assertThat(fakeCredit.customer?.fistName).isEqualTo("Miau")
  }

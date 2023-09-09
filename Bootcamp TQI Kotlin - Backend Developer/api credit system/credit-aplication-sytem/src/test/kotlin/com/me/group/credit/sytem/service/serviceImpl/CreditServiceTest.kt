@@ -46,15 +46,17 @@ class CreditServiceTest {
     fun `save_must create a credit and return creditCreated`() {
         val credit = getCredit()
         val customerMock = getCustomer()
+
         every { costumerServiceMock.findById(1) }returns customerMock
         every { creditiRepostiroryMock.save(credit) }returns credit
 
         val creditCreatedMock = creditService.save(creditDto)
         Assertions.assertThat(creditCreatedMock.id).isEqualTo(1)
-         Assertions.assertThat(creditCreatedMock).isSameAs(credit)
+        Assertions.assertThat(creditCreatedMock).isSameAs(credit)
+
         Assertions.assertThat(creditCreatedMock).isInstanceOf(Credit::class.java)
          verify (exactly = 1){ creditiRepostiroryMock.save(credit)  }
-       Assertions.assertThat(creditCreatedMock.customer).isNotNull()
+         Assertions.assertThat(creditCreatedMock.customer).isNotNull()
     }
 
     @Test
@@ -77,10 +79,22 @@ class CreditServiceTest {
         every { creditService.findAllByCostumer(1) } returns listCredit
         every { creditiRepostiroryMock.findById(1) } returns Optional.of(credit.copy(customer = customer))
 
-        val creditResult = creditService.findCreditCustomerById(credit.id!!,credit.customer?.id!!)
-        Assertions.assertThat(creditResult?.id).isEqualTo(1)
+        val creditResult = creditService.findCreditCustomerById(3,1)
+        Assertions.assertThat(creditResult?.id).isEqualTo(3)
         Assertions.assertThat(creditResult?.customer?.fistName).isEqualTo("Miau")
-        Assertions.assertThat(creditResult?.creditValue).isEqualTo(1234.3.toBigDecimal())
+        Assertions.assertThat(creditResult?.creditCode).isEqualTo(UUID.fromString("7bcacdbb-3786-4ca8-b94c-016548fc0f33"))
+        Assertions.assertThat(creditResult?.creditValue).isEqualTo(4990.3.toBigDecimal())
+    }
+    @Test
+    fun `findCreditCustomerById_must return null when list credit is empty`() {
+        val credit = getCredit()
+        val customer = getCredit().customer?.copy()
+
+        every { creditService.findAllByCostumer(1) } returns listOf()
+        every { creditiRepostiroryMock.findById(1) } returns Optional.of(credit.copy(customer = customer))
+
+        val creditResult = creditService.findCreditCustomerById(3,1)
+        Assertions.assertThat(creditResult).isNull()
     }
 
     @Test
@@ -161,19 +175,6 @@ class CreditServiceTest {
 
 
     }
-    /*companion object {
-        private fun buildCredit(
-            creditValue: BigDecimal = BigDecimal.valueOf(100.0),
-            dayFirstInstallment: LocalDate = LocalDate.now().plusMonths(2L),
-            numberOfInstallments: Int = 15,
-            customer=
-        ): Credit = Credit(
-            creditValue = creditValue,
-            dayFirstInstallment = dayFirstInstallment,
-            numberOfInstallments = numberOfInstallments,
-            customer = customer
-        )
-    }*/
 
     fun getAccount():Account{
         return  Account(
@@ -203,34 +204,35 @@ class CreditServiceTest {
             status = Status.IN_PROGRESS,
             numberOfInstallments = 2,
             dayFirstInstallment = Date().time.plus(20),
-            creditCode = UUID.randomUUID()
+            creditCode = UUID.fromString("7bcacdbb-3786-4ca8-b94c-016548fc0f31")
         ),
         Credit(
-            creditValue = 1340.3.toBigDecimal(),
-            customer = getCustomer(), id = 1,
+            creditValue = 4392.3.toBigDecimal(),
+            customer = getCustomer(),
+                id = 2,
             status = Status.IN_PROGRESS,
             numberOfInstallments = 3,
             dayFirstInstallment = Date().time.plus(20),
-            creditCode = UUID.randomUUID()
+            creditCode = UUID.fromString("7bcacdbb-3786-4ca8-b94c-016548fc0f32")
         ),
         Credit(
             creditValue = 4990.3.toBigDecimal(),
-            customer = getCustomer(), id = 1,
+            customer = getCustomer(), id = 3,
             status = Status.IN_PROGRESS,
             numberOfInstallments = 3,
             dayFirstInstallment =Date().time.plus(20),
-            creditCode = UUID.randomUUID()
+            creditCode = UUID.fromString("7bcacdbb-3786-4ca8-b94c-016548fc0f33")
         )
     )
 
     val  creditDto = CreditDTO(
         customerId = 1L,
-        creditValue = 1234.3.toBigDecimal(),
-        dayOfInstallment = Date().convertDateLongToString(Date().time.plus(20))!!,
+        creditValue = BigDecimal.valueOf(4355.90),
+        dayOfInstallment = "05/09/2023",
         numberOfInstallment = 1
     )
     fun getCredit() =  Credit(
-        creditValue = 1234.3.toBigDecimal(),
+        creditValue = BigDecimal.valueOf(4355.90),
         customer = getCustomer() ,
         id = 1,
         status = Status.IN_PROGRESS,

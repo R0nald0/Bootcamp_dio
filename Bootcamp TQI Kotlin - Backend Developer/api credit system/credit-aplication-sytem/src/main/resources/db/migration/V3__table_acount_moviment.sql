@@ -3,7 +3,7 @@ CREATE TABLE account_movement (
    customer_id BIGINT,
    date_moviment BIGINT NOT NULL,
    type INT,
-   moviment_value DECIMAL,
+   moviment_value FLOAT,
    CONSTRAINT pk_account_movement PRIMARY KEY (id)
 );
 

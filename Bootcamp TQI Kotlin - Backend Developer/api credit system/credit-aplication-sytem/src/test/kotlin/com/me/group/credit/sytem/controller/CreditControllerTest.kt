@@ -7,22 +7,17 @@ import com.me.group.credit.sytem.entity.Address
 import com.me.group.credit.sytem.entity.Credit
 import com.me.group.credit.sytem.entity.Customer
 import com.me.group.credit.sytem.enums.Status
-import com.me.group.credit.sytem.repository.CreditRepository
-import com.me.group.credit.sytem.repository.CustomerRepository
 import com.me.group.credit.sytem.service.serviceImpl.CreditService
 import com.ninjasquad.springmockk.MockkBean
-import com.ninjasquad.springmockk.MockkBeans
 import io.mockk.every
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.context.annotation.Role
+import org.springframework.data.web.JsonPath
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -113,25 +108,30 @@ class CreditControllerTest {
     }
 
     @Test
-    fun `updateStateCredit_must update credit by id e and id customer e retunr credit upadated`() {
+  fun `updateStateCredit_must update credit by id e and id customer e retunr credit upadated`() {
 
-              every { creditServiceMock.updateStateCredit(any(),any(),any())}.returns(creditUpdateReturn)
-
-            val stateCredit = objectMapper.writeValueAsString(Status.APPROVED)
-
-            val idCreditString = objectMapper.writeValueAsString(creditUpdateReturn.id)
+        every { creditServiceMock.updateStateCredit(any(),any(),any())}.returns(creditUpdateReturn)
 
             mockMvc.perform(MockMvcRequestBuilders
-                .patch("$URL_CREDIT/update/${1}?customerId=1")
+                .patch("$URL_CREDIT/update/${1}?creditId=1&creditState=${Status.APPROVED}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(stateCredit)
             )
                 .andExpect(MockMvcResultMatchers.status().isOk)
                     .andExpect(MockMvcResultMatchers.jsonPath("$.creditCode").value("d75405e8-65cd-4bae-a0dc-1ab890cb80d6"))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("APPROVED"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("APPROVED"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("APPROVED"))
                     .andDo(MockMvcResultHandlers.print())
+    }
+
+    @Test
+    fun `getDateMinimum_must return minimum limit date to loan application`(){
+          every { creditServiceMock.getDateLimit() }.returns(LocalDate.now().toEpochDay())
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("$URL_CREDIT/limitDate")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.limitDate").value("31/12/1969 - 21:00:19"))
+                .andDo(MockMvcResultHandlers.print())
     }
 
     @AfterEach

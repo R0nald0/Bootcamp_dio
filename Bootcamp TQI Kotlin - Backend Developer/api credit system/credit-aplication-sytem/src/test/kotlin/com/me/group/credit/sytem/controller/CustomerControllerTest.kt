@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.me.group.credit.sytem.dto.CostumerDTO
 import com.me.group.credit.sytem.dto.toEnttity
 import com.me.group.credit.sytem.entity.Account
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.repository.CustomerRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.math.BigDecimal
-import java.util.*
 
 @ActiveProfiles("Test")
 @SpringBootTest
@@ -44,7 +44,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    fun `most create customer and have code 201 created `() {
+    fun `saveCustomer_most create customer and have code 201 created `() {
          val stringCustomerDTO = objectManager.writeValueAsString(customerr)
 
         mockMvc.perform(MockMvcRequestBuilders.post("${URL_API}/save")
@@ -57,7 +57,7 @@ class CustomerControllerTest {
 
 
     @Test
-    fun `must return erro and 409 status when save same customer`() {
+    fun `saveCustomer_must return erro and 409 status when save same customer`() {
         customerRepository.save(customerr.toEnttity())
         val stringCustomerDto =objectManager.writeValueAsString(customerr)
 
@@ -74,7 +74,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    fun `must return status 400 and bad request when fields is empty`() {
+    fun `saveCustomer_must return status 400 and bad request when fields is empty`() {
 
         val stringCustomerDto =objectManager.writeValueAsString(customerr.copy(fistName = ""))
 
@@ -91,7 +91,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    fun `must find customer by id with code status equals 200`() {
+    fun `findById_must find customer by id with code status equals 200`() {
          val customerRetun = customerRepository.save(customerr.toEnttity())
 
         mockMvc.perform(MockMvcRequestBuilders.get("${URL_API}/${customerRetun.id}")
@@ -141,7 +141,8 @@ class CustomerControllerTest {
 
     @Test
     fun `upadteCosutumer_must update customer by id and retunr customerUpdate with status 200`() {
-         val cus = customerRepository.save(customerr.toEnttity())
+
+        val cus = customerRepository.save(customerr.toEnttity())
         val customerString = objectManager.writeValueAsString(customerUpdate)
 
         mockMvc.perform(MockMvcRequestBuilders.patch("${URL_API}?customerId=${cus.id}")
@@ -182,7 +183,6 @@ class CustomerControllerTest {
                 .andDo(MockMvcResultHandlers.print())
 
     }
-
     @Test
     fun `findCustomerByEmail_most receive a email and return a CustomerViewDTO`() {
           val customerMock = customerRepository.save(customerr.toEnttity())
@@ -193,6 +193,112 @@ class CustomerControllerTest {
             .content(customerMock.email)
         ).andExpect(MockMvcResultMatchers.status().isOk)
 
+    }
+
+    @Test
+    fun `getcustomerByAccountNumber_must return a customer by your account number`(){
+        val c =customerRepository.save(customerr.toEnttity())
+
+        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/findaccountnumber?accountNumber=${c.account.numberAccount}")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fistName").value("Miau"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("28475934625"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("miau@email.com"))
+                .andDo(MockMvcResultHandlers.print())
+    }
+    @Test
+    fun `getcustomerByAccountNumber_must return Bad Request when account number is not found`(){
+
+        val accountNumber =999999
+        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/findaccountnumber?accountNumber=$accountNumber")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value("com.me.group.credit.sytem.exeception.BusinessException"))
+                .andDo(MockMvcResultHandlers.print())
+    }
+
+    @Test
+    fun `findCustomerByEmail_must return a customer by your email`(){
+        val customeSaved =customerRepository.save(customerr.toEnttity())
+
+        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/findemail?email=miau@email.com")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fistName").value("Miau"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(customeSaved.id))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("28475934625"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("miau@email.com"))
+                .andDo(MockMvcResultHandlers.print())
+
+
+    }
+    @Test
+    fun `findCustomerByEmail_must return Bad Request when account number is not found`(){
+
+        val emailCustomer ="fake@email"
+        mockMvc.perform(MockMvcRequestBuilders.get("$URL_API/findemail?email=$emailCustomer")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value("com.me.group.credit.sytem.exeception.BusinessException"))
+                .andDo(MockMvcResultHandlers.print())
+    }
+
+    @Test
+    fun `upadateAccount_must update FreeBalance on customer account`(){
+        val customeSaved =customerRepository.save(customerr.toEnttity())
+
+        val amountEntry = BigDecimal.valueOf(1500.00)
+        // val type = MovimentationType.PIX
+        val type = MovimentationType.TED
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .patch("$URL_API//update/${customeSaved.id}?amountEntry=$amountEntry&type=$type")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.accountFreeBalance").value(1500.00))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.accountBalanceBlocked").value(0.00))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fistName").value("Miau"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("28475934625"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("miau@email.com"))
+                .andDo(MockMvcResultHandlers.print())
+    }
+    @Test
+    fun `upadateAccount_must update BalanceBlocked on customer account`(){
+        val customeSaved =customerRepository.save(customerr.toEnttity())
+
+        val amountEntry = BigDecimal.valueOf(1500.00)
+        val type = MovimentationType.PEDIDO_EMPRESTIMO
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .patch("$URL_API//update/${customeSaved.id}?amountEntry=$amountEntry&type=$type")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.accountFreeBalance").value(0.00))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.accountBalanceBlocked").value(1500.00))
+                .andDo(MockMvcResultHandlers.print())
+    }
+
+    @Test
+    fun `upadateAccount_must retunr Bad reques when id customer not found`(){
+
+        val amountEntry = BigDecimal.valueOf(1500.00)
+        val type = MovimentationType.PEDIDO_EMPRESTIMO
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .patch("$URL_API//update/${3}?amountEntry=$amountEntry&type=$type")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value("com.me.group.credit.sytem.exeception.BusinessException"))
+                .andDo(MockMvcResultHandlers.print())
     }
 
     @AfterEach

@@ -3,9 +3,8 @@ package com.me.group.credit.sytem.controller
 import com.me.group.credit.sytem.dto.AccountMovimentDTO
 import com.me.group.credit.sytem.dto.CreditDTO
 import com.me.group.credit.sytem.dto.response.CreditView
-import com.me.group.credit.sytem.dto.toAccountMoviment
 import com.me.group.credit.sytem.enums.Status
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.extension.convertDateLongToString
 import com.me.group.credit.sytem.service.IAccountMovimentService
 import com.me.group.credit.sytem.service.ICreditService
@@ -28,24 +27,26 @@ class CreditController(
     @PostMapping("/save")
    fun saveCredit(@RequestBody  @Valid creditDTO: CreditDTO):ResponseEntity<CreditView>{
         val credit = creditService.save(creditDTO)
-        serviceCustomer.upadateAccount(credit.creditValue,credit.customer!!, TitulosMovimentacao.PEDIDO_EMPRESTIMO)
+        serviceCustomer.upadateAccount(credit.creditValue,credit.customer!!, MovimentationType.PEDIDO_EMPRESTIMO)
 
-        val accountMoviment  =AccountMovimentDTO(credit.customer?.id!!,Date().time,TitulosMovimentacao.PEDIDO_EMPRESTIMO,credit.creditValue)
+        val accountMoviment  =AccountMovimentDTO(credit.customer?.id!!,Date().time,MovimentationType.PEDIDO_EMPRESTIMO,credit.creditValue)
 
         accountMovimentService.saveAccountMoviment(accountMoviment)
         return ResponseEntity.status(HttpStatus.CREATED).body(CreditView(credit))
    }
 
     @GetMapping("/limitDate")
-    fun getDateMinimun():ResponseEntity<String>{
+    fun getDateMinimum():ResponseEntity<Map<String,String?>>{
         val dateMinimunLimit =  creditService.getDateLimit()
         val dateLongToString = Date().convertDateLongToString(dateMinimunLimit)
-        return ResponseEntity.status(HttpStatus.OK).body(dateLongToString)
+        val map = mapOf("limitDate" to dateLongToString)
+        return ResponseEntity.status(HttpStatus.OK).body(map)
     }
+
+    //TODO VERIFICAR RETORNO DECIMAL
     @GetMapping("/credits")
-    fun findAllCreditByCustomer(
-            @RequestParam(value = "customerId")
-            idCustomer:Long) :ResponseEntity<List<CreditView>>{
+    fun findAllCreditByCustomer(@RequestParam(value = "customerId") idCustomer:Long) :ResponseEntity<List<CreditView>>{
+
          val listCredit = creditService.findAllByCostumer(idCustomer)
          val listCreditView =  listCredit.stream().map {credit->
               CreditView(credit)
@@ -59,16 +60,18 @@ class CreditController(
             val  credit= creditService.findByCreditCode( creditCode ,idCustomer)
             return ResponseEntity.ok(CreditView(credit))
     }
-    @PatchMapping("/update/{creditId}")
+    @PatchMapping("/update/{customerId}")
     fun updateStateCredit(
-        @PathVariable creditId: Long,
-        @RequestParam(value = "customerId")  customerid :Long,
-        @RequestBody creditState : Status,
+        @PathVariable customerId: Long,
+        @RequestParam(value = "creditId")  creditId :Long,
+        @RequestParam (value = "creditState") creditState : Status,
     ):ResponseEntity<CreditView>{
 
-        val resultCredit  = creditService.updateStateCredit(creditId,customerid,creditState)
+        val resultCredit  = creditService.updateStateCredit( idCustomer = customerId, idCredit = creditId, st = creditState)
+
+
         return ResponseEntity.status(HttpStatus.OK).body(CreditView(resultCredit!!))
-        //TODO verificar nullidade
+
     }
 
 }

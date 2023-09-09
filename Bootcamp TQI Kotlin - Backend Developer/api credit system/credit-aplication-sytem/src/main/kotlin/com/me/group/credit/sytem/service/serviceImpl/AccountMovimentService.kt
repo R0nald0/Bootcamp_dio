@@ -16,6 +16,7 @@ class AccountMovimentService(
     private val  customerServiceImpl: ICustomerService
 ) :IAccountMovimentService {
     override fun saveAccountMoviment(accountMovimentDTO: AccountMovimentDTO): AccountMovement {
+        customerServiceImpl.findById(accountMovimentDTO.idCustomer)
         val accountMovement = accountMovimentDTO.toAccountMoviment()
         return accountMovimentRepository.save(accountMovement)
 

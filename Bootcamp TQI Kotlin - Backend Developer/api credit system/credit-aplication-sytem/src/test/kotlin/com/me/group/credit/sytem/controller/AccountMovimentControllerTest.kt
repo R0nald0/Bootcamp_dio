@@ -2,43 +2,30 @@ package com.me.group.credit.sytem.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.me.group.credit.sytem.dto.AccountMovimentDTO
-import com.me.group.credit.sytem.dto.toAccountMoviment
 import com.me.group.credit.sytem.entity.Account
 import com.me.group.credit.sytem.entity.AccountMovement
 import com.me.group.credit.sytem.entity.Address
 import com.me.group.credit.sytem.entity.Customer
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
-import com.me.group.credit.sytem.repository.AccountMovimentRepository
-import com.me.group.credit.sytem.repository.CustomerRepository
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.service.serviceImpl.AccountMovimentService
-import com.me.group.credit.sytem.service.serviceImpl.CustomerServiceImpl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.jmx.support.ObjectNameManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.client.match.MockRestRequestMatchers
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.util.MultiValueMap
 import java.math.BigDecimal
 import java.util.*
 
@@ -157,27 +144,27 @@ class AccountMovimentControllerTest(
        AccountMovement(
            id = 1,
            dateMoviment = Date().time,
-           type = TitulosMovimentacao.TED,
+           type = MovimentationType.TED,
            movimentValue = "1230.0".toBigDecimal(),
            customer = buildCustomer()
        ),
        AccountMovement(
            id = 2,
            dateMoviment = Date().time,
-           type = TitulosMovimentacao.PIX,
+           type = MovimentationType.PIX,
            movimentValue = "3230.0".toBigDecimal(),
            customer = buildCustomer()
        ),
   )
     fun getAccounMovimentDto() =AccountMovimentDTO(
        dateMoviment = Date().time,
-       type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+       type = MovimentationType.PEDIDO_EMPRESTIMO,
        movimentValue = BigDecimal.valueOf(1300L),
        idCustomer = 1
    )
     fun getAccounMoviment() =AccountMovement(
        dateMoviment = Date().time,
-       type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+       type = MovimentationType.PEDIDO_EMPRESTIMO,
        movimentValue = BigDecimal.valueOf(1300L),
        customer = buildCustomer()
    )

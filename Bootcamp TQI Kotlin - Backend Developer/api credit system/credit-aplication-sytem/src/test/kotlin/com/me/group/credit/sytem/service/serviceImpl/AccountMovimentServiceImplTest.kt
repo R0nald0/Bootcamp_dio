@@ -5,7 +5,7 @@ import com.me.group.credit.sytem.entity.Account
 import com.me.group.credit.sytem.entity.AccountMovement
 import com.me.group.credit.sytem.entity.Address
 import com.me.group.credit.sytem.entity.Customer
-import com.me.group.credit.sytem.enums.TitulosMovimentacao
+import com.me.group.credit.sytem.enums.MovimentationType
 import com.me.group.credit.sytem.exeception.BusinessException
 import com.me.group.credit.sytem.extension.convertDateStringToLong
 import com.me.group.credit.sytem.repository.AccountMovimentRepository
@@ -16,7 +16,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -39,19 +38,23 @@ class AccountMovimentServiceImplTest {
      lateinit var customerMock : Customer
     @BeforeEach
     fun setUp() {
-    customerMock= getCustomer()
+      customerMock= getCustomer()
     }
 
     @Test
     fun `saveAccountMoviment_mustSave movimentation by account`() {
 
-        every { accounntMovimentRepositoryMock.save(accountMovementMock) } returns accountMovementMock
-        val accountMovimentReturn =  accountMovimentImplMock.saveAccountMoviment(getAccounMovimentDto())
+        every { customerServiceImplMock.findById(any()) } returns customerMock
+        every { accounntMovimentRepositoryMock.save(any()) } returns accountMovementMock
+
+        val accountMovimentReturn =  accountMovimentImplMock.saveAccountMoviment(getAccounMovimentDto().copy(1))
 
         Assertions.assertThat(accountMovimentReturn).isNotNull
         Assertions.assertThat(accountMovimentReturn.dateMoviment).isEqualTo(Date().convertDateStringToLong("17/07/2023")!!)
+        Assertions.assertThat(accountMovimentReturn.type).isEqualTo(MovimentationType.PEDIDO_EMPRESTIMO)
+        Assertions.assertThat(accountMovimentReturn.movimentValue).isEqualTo("1500.43")
         verify(exactly = 1){
-            accounntMovimentRepositoryMock.save(accountMovementMock)
+            accounntMovimentRepositoryMock.save(any())
         }
     }
     @Test
@@ -63,7 +66,7 @@ class AccountMovimentServiceImplTest {
 
         val accountMovements = accountMovimentImplMock.getAllAccontMovimentCostumer(1)
         Assertions.assertThat(accountMovements).isNotEmpty
-        Assertions.assertThat(accountMovements[0].type).isEqualTo(TitulosMovimentacao.PEDIDO_EMPRESTIMO)
+        Assertions.assertThat(accountMovements[0].type).isEqualTo(MovimentationType.PEDIDO_EMPRESTIMO)
         Assertions.assertThat(accountMovements).size().isEqualTo(3)
         verify (exactly = 1){ accounntMovimentRepositoryMock.findAllByCustomer(1L)  }
     }
@@ -84,7 +87,7 @@ class AccountMovimentServiceImplTest {
         val accountMoviment = accountMovimentImplMock.findAccountMoviment(1L, 1L)
 
         Assertions.assertThat(accountMoviment).isNotNull
-        Assertions.assertThat(accountMoviment?.type).isEqualTo(TitulosMovimentacao.PEDIDO_EMPRESTIMO)
+        Assertions.assertThat(accountMoviment?.type).isEqualTo(MovimentationType.PEDIDO_EMPRESTIMO)
         verify(exactly = 1){accountMovimentImplMock.getAllAccontMovimentCostumer(1L)}
     }
 
@@ -130,14 +133,14 @@ class AccountMovimentServiceImplTest {
             customer =getCustomer(),
             dateMoviment = Date().convertDateStringToLong("17/07/2023")!!,
             movimentValue = BigDecimal.valueOf(100L),
-            type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+            type = MovimentationType.PEDIDO_EMPRESTIMO,
         ),
         AccountMovement(
             id = 2L,
             customer= getCustomer(),
             dateMoviment = Date().convertDateStringToLong("17/07/2023")!!,
             movimentValue = BigDecimal.valueOf(100L),
-            type = TitulosMovimentacao.PAGAMENTO_BOLETO,
+            type = MovimentationType.PAGAMENTO_BOLETO,
         ),
 
         AccountMovement(
@@ -145,7 +148,7 @@ class AccountMovimentServiceImplTest {
             customer=getCustomer(),
             dateMoviment = Date().convertDateStringToLong("17/07/2023")!!,
             movimentValue = BigDecimal.valueOf(100L),
-            type = TitulosMovimentacao.TED,
+            type = MovimentationType.TED,
         )
     )
 
@@ -178,12 +181,12 @@ class AccountMovimentServiceImplTest {
         id = 1L,
         customer = getCustomer(),
         dateMoviment = Date().convertDateStringToLong("17/07/2023")!!,
-        movimentValue = BigDecimal.valueOf(100L),
-        type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+        movimentValue = BigDecimal.valueOf(1500.43),
+        type = MovimentationType.PEDIDO_EMPRESTIMO,
     )
     fun getAccounMovimentDto() = AccountMovimentDTO(
             dateMoviment = Date().time,
-            type = TitulosMovimentacao.PEDIDO_EMPRESTIMO,
+            type = MovimentationType.PEDIDO_EMPRESTIMO,
             movimentValue = BigDecimal.valueOf(1300L),
             idCustomer = 1
     )

@@ -15,7 +15,7 @@ data class CreditView(
         val id :Long?
 ) {
     constructor(credit: Credit) : this(
-            creditValue = credit.creditValue,
+            creditValue = credit.creditValue.setScale(2),
             creditCode = credit.creditCode,
             numberOfInstallment = credit.numberOfInstallments,
             status = credit.status,
