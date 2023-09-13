@@ -35,7 +35,7 @@ class AccountMovimentService(
     override fun findAccountMoviment(idAccountMovement: Long, idCustomer: Long): AccountMovement? {
         try {
             val movimentCostumer = getAllAccontMovimentCostumer(idCustomer)
-          val accountMoviments = movimentCostumer.filter {accountMovement ->
+           val accountMoviments = movimentCostumer.filter {accountMovement ->
                 return  if (accountMovement.id == idAccountMovement) accountMovement
                 else return null
             }
@@ -45,21 +45,6 @@ class AccountMovimentService(
             throw BusinessException("fail to found account moviment")
         }
     }
-/*    override fun enterMoney(valorEntrada: BigDecimal, idcustomer: Long, typrEntry : TitulosMovimentacao): AccountMovement {
-        try {
-            val customer = customerServiceImpl.findById(idcustomer)
-            val accountMovement = AccountMovement(
-                customer = customer,
-                movimentValue = valorEntrada,
-                dateMoviment = Date().time,
-                type = typrEntry
-            )
-            val movimentSaved = accountMovimentRepository.save(accountMovement)
 
-            return movimentSaved
-        } catch (businessExption: BusinessException) {
-            throw BusinessException("fail when entry value")
-        }
-    }*/
 
 }

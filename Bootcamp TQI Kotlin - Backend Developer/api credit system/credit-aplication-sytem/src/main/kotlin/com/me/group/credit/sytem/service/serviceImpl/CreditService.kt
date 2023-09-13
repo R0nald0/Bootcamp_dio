@@ -21,25 +21,26 @@ class CreditService(
 
     override fun save(creditDTO: CreditDTO): Credit {
         val dateStringToLong = LocalDate.parse(creditDTO.dayOfInstallment, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        val dataLimit = LocalDate.now().plusMonths(3L)
+        val dateMaxLimit = LocalDate.now().plusMonths(3L)
+        val dateMinimunLimit = LocalDate.now()
 
-        if (dateStringToLong <= dataLimit) {
-            val d = Date().convertDateStringToLong(creditDTO.dayOfInstallment)!!
-            val credit = Credit(
-                    dayFirstInstallment = d,
-                    creditValue = creditDTO.creditValue,
-                    numberOfInstallments = creditDTO.numberOfInstallment,
-                    customer = costumerService.findById(creditDTO.customerId)
-            )
+        if (dateStringToLong > dateMaxLimit) throw BusinessException("the date must be on maximum three month forward")
+        if (dateStringToLong < dateMinimunLimit) throw BusinessException("the date must be less than current")
 
-            credit.apply {
-                this.customer = costumerService.findById(credit.customer?.id!!)
-            }
+        val d = Date().convertDateStringToLong(creditDTO.dayOfInstallment)!!
+        val credit = Credit(
+                dayFirstInstallment = d,
+                creditValue = creditDTO.creditValue,
+                numberOfInstallments = creditDTO.numberOfInstallment,
+                customer = costumerService.findById(creditDTO.customerId)
+        )
 
-            return creditRepository.save(credit)
-        } else {
-            throw BusinessException("the date must be on maximum three month forward")
+        credit.apply {
+            this.customer = costumerService.findById(credit.customer?.id!!)
         }
+
+        return creditRepository.save(credit)
+
     }
         override fun getDateLimit(): Long {
             // val stringToLongDate = Date().convertDateStringToLong(dateLimit)
@@ -89,19 +90,19 @@ class CreditService(
             try {
                 val credit = findCreditCustomerById(idCredit, idCustomer)
                 val creditUpdate = credit?.copy(status = st)
+
                 if (creditUpdate != null) {
-                   val creditUpadated  = creditRepository.save(creditUpdate)
-                    if (creditUpadated != null) {
-                        costumerService.upadateStateAccount(creditUpadated.creditValue, creditUpadated.customer!!, st)
-                    }
-                    return  creditUpadated
+                    val creditUpdated  = creditRepository.save(creditUpdate)
+                    costumerService.upadateStateCredit(creditUpdated.creditValue, creditUpdated.customer!!, st)
+                    return  creditUpdated
                 }
+
                 return null
-            } catch (busissnesException: BusinessException) {
-                throw BusinessException(busissnesException.message)
+
+            } catch (businessException: BusinessException) {
+                throw BusinessException(businessException.message)
             }
         }
-
 
 
     }

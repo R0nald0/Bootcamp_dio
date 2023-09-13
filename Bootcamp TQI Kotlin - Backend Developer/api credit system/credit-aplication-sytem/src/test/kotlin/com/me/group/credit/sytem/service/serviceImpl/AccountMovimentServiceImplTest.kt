@@ -92,17 +92,17 @@ class AccountMovimentServiceImplTest {
     }
 
    @Test
-   fun `findAccountMoviment_most return null when not found accountMovimentation`() {
+   fun `findAccountMoviment_most return null when not found accountMovimentation by id`() {
 
-       every { accountMovimentImplMock.getAllAccontMovimentCostumer(1) }.returns(mockMovimentation())
+       every { accountMovimentImplMock.getAllAccontMovimentCostumer(any()) }.returns(mockMovimentation())
 
-       val accountMoviment = accountMovimentImplMock.findAccountMoviment(1L, 5L)
+       val accountMoviment = accountMovimentImplMock.findAccountMoviment(5L, 1L)
        Assertions.assertThat(accountMoviment).isNull()
        verify(exactly = 1){accountMovimentImplMock.getAllAccontMovimentCostumer(1L)}
    }
 
       @Test
-      fun `findAccountMoviment_most return BusinessExcption when account is null`() {
+      fun `findAccountMoviment_most return BusinessException when account not found`() {
           every { customerServiceImplMock.findById(1L) }.throws(BusinessException("account not found"))
 
           Assertions.assertThatExceptionOfType(BusinessException::class.java).isThrownBy {

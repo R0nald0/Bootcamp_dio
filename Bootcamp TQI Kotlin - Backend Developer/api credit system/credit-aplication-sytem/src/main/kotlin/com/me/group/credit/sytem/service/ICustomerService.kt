@@ -13,6 +13,6 @@ interface ICustomerService {
     fun delete (idCostumer : Long):Boolean
    /* fun enterMoney(valorEntrada: BigDecimal,  idcustomer: Long, typrEntry : TitulosMovimentacao): Account*/
     fun upadateAccount(valorEntrada: BigDecimal, customer: Customer, typrEntry : MovimentationType):Customer
-    fun upadateStateAccount(creditValue:BigDecimal,customer: Customer,status: Status):Customer
+    fun upadateStateCredit(creditValue:BigDecimal, customer: Customer, status: Status):Customer
 
 }

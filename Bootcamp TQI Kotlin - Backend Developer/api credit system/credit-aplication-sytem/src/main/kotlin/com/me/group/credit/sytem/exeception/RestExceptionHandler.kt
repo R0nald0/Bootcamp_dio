@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter
 
 @RestControllerAdvice
 class RestExceptionHandler {
+
     private val dateFormat = DateTimeFormatter.ofPattern("dd-MM-YYYY, HH:mm:ss")
   @ExceptionHandler(MethodArgumentNotValidException::class)
   fun handlerValidException(ex:MethodArgumentNotValidException):ResponseEntity<ExeceptionsDetails>{
@@ -57,6 +58,20 @@ class RestExceptionHandler {
                         timeStamp = LocalDateTime.now().format(dateFormat),
                         status =  HttpStatus.BAD_REQUEST.value(),
                         exception = ex.javaClass.name,
+                        detail = mutableMapOf(ex.cause.toString() to ex.localizedMessage)
+                ),
+                HttpStatus.BAD_REQUEST
+        )
+    }
+
+    @ExceptionHandler(AmountInvalidException::class)
+    fun handlerValidException(ex : AmountInvalidException):ResponseEntity<ExeceptionsDetails>{
+        return  ResponseEntity(
+                ExeceptionsDetails(
+                        title = "Bad Request",
+                        timeStamp = LocalDateTime.now().format(dateFormat),
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        exception =  ex.javaClass.name,
                         detail = mutableMapOf(ex.cause.toString() to ex.localizedMessage)
                 ),
                 HttpStatus.BAD_REQUEST

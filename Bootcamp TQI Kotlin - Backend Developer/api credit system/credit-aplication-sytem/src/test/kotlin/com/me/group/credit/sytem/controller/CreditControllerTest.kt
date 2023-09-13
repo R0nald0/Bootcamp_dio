@@ -108,7 +108,7 @@ class CreditControllerTest {
     }
 
     @Test
-  fun `updateStateCredit_must update credit by id e and id customer e retunr credit upadated`() {
+    fun `updateStateCredit_must update credit by id e and id customer e retunr credit upadated`() {
 
         every { creditServiceMock.updateStateCredit(any(),any(),any())}.returns(creditUpdateReturn)
 

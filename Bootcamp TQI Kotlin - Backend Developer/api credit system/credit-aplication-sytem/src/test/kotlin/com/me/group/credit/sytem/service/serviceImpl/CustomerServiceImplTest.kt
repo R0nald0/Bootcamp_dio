@@ -3,6 +3,7 @@ package com.me.group.credit.sytem.service.serviceImpl
 import com.me.group.credit.sytem.entity.*
 import com.me.group.credit.sytem.enums.Status
 import com.me.group.credit.sytem.enums.MovimentationType
+import com.me.group.credit.sytem.exeception.AmountInvalidException
 import com.me.group.credit.sytem.exeception.BusinessException
 import com.me.group.credit.sytem.extension.convertDateStringToLong
 import com.me.group.credit.sytem.repository.AccountMovimentRepository
@@ -149,28 +150,43 @@ fun `delete must throw a Businesse exception when credit have status approved`()
 
     @Test
     fun `upadateAccount_must upadate account`() {
-         every { repositoryCustomer.save(any()) }.returns(customer)
+
+        val mockCustomerUpdate = customer
+         every { repositoryCustomer.save(any()) }.returns(mockCustomerUpdate)
 
         val upadateAccount = customerServiceImplMock.upadateAccount(
-            BigDecimal.valueOf(200), customer, MovimentationType.PEDIDO_EMPRESTIMO
+            BigDecimal.valueOf(300), customer, MovimentationType.PEDIDO_EMPRESTIMO
         )
-        Assertions.assertThat(upadateAccount.account.accountBalanceBlocked).isEqualTo(BigDecimal.valueOf(200))
-        Assertions.assertThat(upadateAccount.account.accountFreeBalance).isEqualTo(BigDecimal.valueOf(0))
+
+        Assertions.assertThat(upadateAccount.account.accountBalanceBlocked).isEqualTo(BigDecimal.valueOf(300L))
+        Assertions.assertThat(upadateAccount.account.accountFreeBalance).isEqualTo(BigDecimal.valueOf(100))
+
         verify(exactly = 1){ repositoryCustomer.save(any())}
 
     }
     @Test
      fun `upadateStateAccount_must return customer with account balances upadted`(){
-           every { repositoryCustomer.save(any()) }.returns(customer)
+         customer.account.accountBalanceBlocked =  BigDecimal(150.00)
+         every { repositoryCustomer.save(any()) }.returns(customer)
 
-           val upadteCus = customerServiceImplMock.upadateStateAccount(BigDecimal.valueOf(100.00),customer,Status.APPROVED)
+        val upadteCus = customerServiceImplMock.upadateStateCredit(BigDecimal.valueOf(150.00),customer,Status.APPROVED)
 
-        Assertions.assertThat(upadteCus.account.accountFreeBalance).isEqualTo("100.0")
-        Assertions.assertThat(upadteCus.account.accountBalanceBlocked).isEqualTo("0")
+        Assertions.assertThat(upadteCus.account.accountFreeBalance).isEqualTo("250.0")
+        Assertions.assertThat(upadteCus.account.accountBalanceBlocked).isEqualTo("0.0")
         Assertions.assertThat(upadteCus.account.numberAccount).isEqualTo("999999".toLong())
 
      }
 
+    @Test
+    fun `upadateStateAccount_must return AmountInvalidException when blockedBalance is 0 `(){
+        every { repositoryCustomer.save(any()) }.returns(customer)
+
+
+        Assertions.assertThatThrownBy {
+            customerServiceImplMock.upadateStateCredit(BigDecimal.valueOf(150.00),customer,Status.APPROVED) }
+                .isInstanceOf(AmountInvalidException::class.java)
+                .hasMessage("Customer not have amount blocked")
+    }
     @AfterEach
     fun tearDown() {}
 
@@ -179,22 +195,21 @@ fun `delete must throw a Businesse exception when credit have status approved`()
              numberAccount =999999,
              accountBalanceBlocked = BigDecimal.valueOf(0),
              movements = mutableListOf(),
-             accountFreeBalance = BigDecimal.valueOf(100.00)
+             accountFreeBalance = BigDecimal.valueOf(100)
          )
      }
 
-
     val customer = Customer(
-        "Miau",
-        "Silva",
-        "03656811806",
-        3000.0.toBigDecimal(),
-        "miau@email.com",
-        "21313",
-        Address(
+       fistName =  "Miau",
+     lastName =   "Silva",
+      cpf =   "03656811806",
+       income =  3000.0.toBigDecimal(),
+        email = "miau@email.com",
+       password =  "21313",
+       address =  Address(
             zipCode = "321344", street = "rua do peixe"
         ),
-        mutableListOf(),
+       credits =  mutableListOf(),
         account = getAccount(),
         id = 1
     )

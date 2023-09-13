@@ -5,5 +5,5 @@ data class ExeceptionsDetails(
         val timeStamp :String,
         val status : Int,
         val exception:String,
-        val  detail:MutableMap<String,String?>
+        val detail:MutableMap<String,String?>
 )

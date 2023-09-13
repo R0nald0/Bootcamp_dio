@@ -21,9 +21,11 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.test.context.ActiveProfiles
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @ActiveProfiles("test")
@@ -46,29 +48,47 @@ class CreditServiceTest {
     fun `save_must create a credit and return creditCreated`() {
         val credit = getCredit()
         val customerMock = getCustomer()
+         val date =   LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
-        every { costumerServiceMock.findById(1) }returns customerMock
-        every { creditiRepostiroryMock.save(credit) }returns credit
+        every { costumerServiceMock.findById(any()) }returns customerMock
+        every { creditiRepostiroryMock.save(any()) }returns credit
 
-        val creditCreatedMock = creditService.save(creditDto)
+        val creditCreatedMock = creditService.save(creditDto.copy(dayOfInstallment = date))
+        Assertions.assertThat(creditCreatedMock.status).isEqualTo(Status.IN_PROGRESS)
         Assertions.assertThat(creditCreatedMock.id).isEqualTo(1)
         Assertions.assertThat(creditCreatedMock).isSameAs(credit)
-
         Assertions.assertThat(creditCreatedMock).isInstanceOf(Credit::class.java)
-         verify (exactly = 1){ creditiRepostiroryMock.save(credit)  }
-         Assertions.assertThat(creditCreatedMock.customer).isNotNull()
+        Assertions.assertThat(creditCreatedMock.customer).isNotNull()
+        Assertions.assertThat(creditCreatedMock.creditValue).isEqualTo(BigDecimal.valueOf(4355.90))
+
+        verify (exactly = 1){ creditiRepostiroryMock.save(any())  }
     }
 
     @Test
-    fun `save_must return BusinessException when date invalid`() {
-        val creditMock = getCredit().
-        copy(dayFirstInstallment = LocalDate.of(2023,10,14).toEpochDay())
+    fun `save_must return BusinessException when date is three months or more ahead `() {
 
-        every { creditiRepostiroryMock.save(any())}returns creditMock
+       val creditMock = creditDto.copy(dayOfInstallment =  LocalDate.parse("2024-10-01").format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+
+        every { costumerServiceMock.findById(any()) }.returns(getCustomer())
+        every { creditiRepostiroryMock.save(any())}returns getCredit()
+
 
         Assertions.assertThatExceptionOfType(BusinessException::class.java).isThrownBy {
-            creditService.save(creditDto)
+            creditService.save(creditMock)
         }.withMessage("the date must be on maximum three month forward")
+    }
+
+    @Test
+    fun `save_must return BusinessException when date is less than current`() {
+
+        val date =   LocalDate.parse("2023-08-01").format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+
+        every { creditiRepostiroryMock.save(any())}answers {getCredit()}
+
+        Assertions.assertThatThrownBy { creditService.save(creditDto.copy(dayOfInstallment = date)) }
+                .isInstanceOf(BusinessException::class.java)
+                .hasMessage("the date must be less than current")
+
     }
 
     @Test
@@ -98,15 +118,14 @@ class CreditServiceTest {
     }
 
     @Test
-    fun `findCreditCustomerById_must return BusinessExeception when not found  credit to id of the customer`() {
-        val credit = getCredit()
-        val customer = getCredit().customer?.copy(credits = listCredit)
+    fun `findCreditCustomerById_must return IndexOutOfBoundsException when not found  credit to id of the customer valid`() {
 
         every { creditService.findAllByCostumer(1) } returns listCredit
 
-        val creditReturn = creditService.findCreditCustomerById(90,1)
-        Assertions.assertThat(creditReturn).isNotNull()
-        verify(exactly = 1){creditService.findAllByCostumer(1)}
+        Assertions.assertThatThrownBy { creditService.findCreditCustomerById(90,1) }
+                .isInstanceOf(IndexOutOfBoundsException::class.java)
+                .hasMessage("id do credito não encontrado")
+
     }
     @Test
     fun `findAllByCustomer_should return all credits from a customer`() {
@@ -127,7 +146,7 @@ class CreditServiceTest {
         }.withMessage("id $idCustomer customer not found")
     }
     @Test
-    fun `findCreditByCode_must return a credit by your code`() {
+    fun `findByCreditCode_must return a credit by your code`() {
           val credit = getCredit()
 
          every { creditiRepostiroryMock.findByCreditCode(creditCode = credit.creditCode) }returns  credit
@@ -140,7 +159,7 @@ class CreditServiceTest {
     }
 
     @Test
-    fun `findCreditByCode_should return IllegalArgumentException when not found credit from customer`() {
+    fun `findByCreditCode_should return IllegalArgumentException when not found credit from customer`() {
         every { creditiRepostiroryMock.findByCreditCode(any()) }returns getCredit()
 
         Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
@@ -150,13 +169,14 @@ class CreditServiceTest {
     }
 
     @Test
-    fun `findCreditByCode_should return BusinessException when not find credit id`() {
+    fun `findByCreditCode_should return BusinessException when not find credit id`() {
         val creditCode = UUID.randomUUID()
         every { creditiRepostiroryMock.findByCreditCode(creditCode) }returns null
 
         Assertions.assertThatExceptionOfType(BusinessException::class.java).isThrownBy {
             creditService.findByCreditCode(creditCode,2)
         }.withMessage("Credit code ${creditCode} not found")
+
        verify(exactly = 1){creditiRepostiroryMock.findByCreditCode(any()) }
     }
 
@@ -166,6 +186,14 @@ class CreditServiceTest {
         every { creditiRepostiroryMock.findByCreditCode(creditMock.creditCode) } returns  creditMock
         val resultCredit  = creditService.updateStateCredit(creditMock.creditCode,1,Status.REJECT)
         Assertions.assertThat(resultCredit.status).isEqualTo(Status.REJECT)*/
+    }
+
+    @Test
+    fun `getDateLimit_must retunr a minimun date of installment to customer`(){
+
+        val dateLimit = creditService.getDateLimit()
+        Assertions.assertThat(dateLimit).isNotNull()
+
     }
 
 

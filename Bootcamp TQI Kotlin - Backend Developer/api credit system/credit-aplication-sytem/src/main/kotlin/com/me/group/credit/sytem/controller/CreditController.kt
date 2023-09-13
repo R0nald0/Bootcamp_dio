@@ -43,7 +43,6 @@ class CreditController(
         return ResponseEntity.status(HttpStatus.OK).body(map)
     }
 
-    //TODO VERIFICAR RETORNO DECIMAL
     @GetMapping("/credits")
     fun findAllCreditByCustomer(@RequestParam(value = "customerId") idCustomer:Long) :ResponseEntity<List<CreditView>>{
 
@@ -61,17 +60,13 @@ class CreditController(
             return ResponseEntity.ok(CreditView(credit))
     }
     @PatchMapping("/update/{customerId}")
-    fun updateStateCredit(
+    fun accountMovementService(
         @PathVariable customerId: Long,
         @RequestParam(value = "creditId")  creditId :Long,
         @RequestParam (value = "creditState") creditState : Status,
     ):ResponseEntity<CreditView>{
-
         val resultCredit  = creditService.updateStateCredit( idCustomer = customerId, idCredit = creditId, st = creditState)
-
-
         return ResponseEntity.status(HttpStatus.OK).body(CreditView(resultCredit!!))
-
     }
 
 }
