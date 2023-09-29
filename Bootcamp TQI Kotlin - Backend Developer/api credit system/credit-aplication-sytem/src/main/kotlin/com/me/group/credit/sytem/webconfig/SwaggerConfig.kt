@@ -11,7 +11,7 @@ class SwaggerConfig {
     fun publicApi (): GroupedOpenApi{
         return GroupedOpenApi.builder()
                 .group("springapplicatiocreditsystem-public")
-                .pathsToMatch("/api/customers/**","/api/credit/**","/api/movimentation/**")
+                .pathsToMatch("/api/customers/**","/api/credit/**","/api/movimentation/**","/api/connect/**")
                 .build()
     }
 }

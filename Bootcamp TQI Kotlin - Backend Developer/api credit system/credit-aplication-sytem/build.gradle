@@ -27,6 +27,12 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	implementation 'org.postgresql:postgresql:42.1.4'
 
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket:2.7.13'
+
+	//Firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 	runtimeOnly 'com.h2database:h2'
 
